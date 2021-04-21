@@ -1,6 +1,6 @@
 type ltlFormula =
-  | Var of string
   | Const of bool
+  | Var of string
   | Or of ltlFormula * ltlFormula
   | And of ltlFormula * ltlFormula
   | Not of ltlFormula
