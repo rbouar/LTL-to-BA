@@ -2,6 +2,21 @@ open Ltl
 
 type state = ltlFormula list;;
 
+let state_to_string s =
+  let rec state_to_string_aux s res = match s with
+    | [] -> res ^ "}"
+    | [f] -> res ^ (ltlFormula_to_string f) ^ "}"
+    | f :: s -> state_to_string_aux s (res ^ (ltlFormula_to_string f) ^ ", ")
+  in state_to_string_aux s "{"
+
+let states_to_string states =
+  let rec states_to_string_aux states res = match states with
+    | [] -> res ^ "}"
+    | [s] -> res ^ (state_to_string s) ^ "}"
+    | s :: states -> states_to_string_aux states (res ^ (state_to_string s) ^ ", ")
+  in states_to_string_aux states "{"
+
+
 let rec is_in_state s ltlf = match s with
   | [] -> false
   | f :: s -> if equals f ltlf then true
@@ -22,32 +37,6 @@ type buchi = {
   final_states : state list;
   init_states : state list;
 }
-
-(* let rec get_sub_formula f = *)
-  (* let rec get_sub_formula_aux f acc = match f with *)
-    (* | Const b -> add_all_ltl_to_state acc [(Const b); (Const !b)] *)
-    (* | Var s -> add_all_ltl_to_state acc [(Var s); (Not Var s)] *)
-    (* | Or f1, f2 -> *)
-      (* let acc = add_all_ltl_to_state acc *)
-          (* [f1; f2; Not f1; Not f2; f1 Or f2; Not (f1 Or f2)] in *)
-      (* let acc = get_sub_formula_aux f1 acc in *)
-      (* get_sub_formula_aux f2 acc *)
-    (* | And f1, f2 -> *)
-      (* let acc = add_all_ltl_to_state acc *)
-          (* [f1; f2; Not f1; Not f2; f1 And f2; Not (f1 And f2)] in *)
-      (* let acc = get_sub_formula_aux f1 acc in *)
-      (* get_sub_formula_aux f2 acc *)
-    (* | Until f1, f2 -> *)
-      (* let acc = add_all_ltl_to_state acc *)
-          (* [f1; f2; Not f1; Not f2; f1 Until f2; Not (f1 Until f2)] in *)
-      (* let acc = get_sub_formula_aux f1 acc in *)
-      (* get_sub_formula_aux f2 acc *)
-    (* | Next f -> get_sub_formula_aux f *)
-                  (* (add_all_ltl_to_state acc [Next f; Not (Next f)]) *)
-    (* | Not f -> get_sub_formula_aux f *)
-                 (* (add_all_ltl_to_state acc [f; Not f]) *)
-  (* in get_sub_formula_aux f [] *)
-
 
 let add_const_to_states b states =
   let rec add_const_to_states_aux b states acc = match states with
@@ -147,15 +136,3 @@ let rec add_to_all_states f states = match f with
 
 
 let get_states f = add_to_all_states f []
-
-let state_to_string s =
-  let rec state_to_string_aux s res = match s with
-    | [] -> res ^ "}"
-    | f :: s -> state_to_string_aux s (res ^ ", " ^ (ltlFormula_to_string f))
-  in state_to_string_aux s "{"
-
-let states_to_string states =
-  let rec states_to_string_aux states res = match states with
-    | [] -> res ^ "}"
-    | s :: states -> states_to_string_aux states (res ^ ", " ^ (state_to_string s))
-  in states_to_string_aux states "{"
