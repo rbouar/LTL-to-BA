@@ -30,7 +30,7 @@ let rec equals ltlf1 ltlf2 = match ltlf1, ltlf2 with
   | Var s1, Var s2 -> s1 = s2
   | Or (ol1, or1), Or (ol2, or2) -> (equals ol1 ol2) && (equals or1 or2)
   | And (al1, ar1), And (al2, ar2) -> (equals al1 al2) && (equals ar1 ar2)
-  | Not no1, no2 -> equals no1 no2
+  | Not no1, Not no2 -> equals no1 no2
   | Next ne1, ne2 -> equals ne1 ne2
   | Until (ul1, ur1), Until (ul2, ur2) -> (equals ul1 ul2) && (equals ur1 ur2)
   | _, _ -> false
