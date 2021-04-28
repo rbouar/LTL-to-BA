@@ -136,3 +136,31 @@ let rec add_to_all_states f states = match f with
 
 
 let get_states f = add_to_all_states f []
+
+let get_initial_states f states =
+  let rec get_initial_states_aux f states acc = match states with
+    | [] -> acc
+    | s :: states ->
+      let acc = if is_in_state s f
+        then s :: acc
+        else acc in
+      get_initial_states_aux f states acc in
+  get_initial_states_aux f states []
+
+
+
+let get_final_states f states =
+  let untils = get_list_of_untils f in
+  let rec is_final_states s l = match l with
+    | [] -> true
+    | (Until (_, f2) as f) :: l ->
+      if is_in_state s f && (not (is_in_state s f2)) then false
+      else is_final_states s l
+    | _ -> failwith "Impossible" in
+  let rec get_final_states_aux states acc = match states with
+    | [] -> acc
+    | s :: states ->
+      if is_final_states s untils
+      then get_final_states_aux states (s :: acc)
+      else get_final_states_aux states acc in
+  get_final_states_aux states []

@@ -31,6 +31,19 @@ let rec equals ltlf1 ltlf2 = match ltlf1, ltlf2 with
   | Or (ol1, or1), Or (ol2, or2) -> (equals ol1 ol2) && (equals or1 or2)
   | And (al1, ar1), And (al2, ar2) -> (equals al1 al2) && (equals ar1 ar2)
   | Not no1, Not no2 -> equals no1 no2
-  | Next ne1, ne2 -> equals ne1 ne2
+  | Next ne1, Next ne2 -> equals ne1 ne2
   | Until (ul1, ur1), Until (ul2, ur2) -> (equals ul1 ul2) && (equals ur1 ur2)
   | _, _ -> false
+
+let get_list_of_untils f =
+  let rec get_list_of_untils_aux f acc = match f with
+    | Or (f1, f2)
+    | And (f1, f2) ->
+      get_list_of_untils_aux f1 (get_list_of_untils_aux f2 acc)
+    | Next f
+    | Not f -> get_list_of_untils_aux f acc
+    | Until (f1, f2) ->
+      let acc = get_list_of_untils_aux f1 (f :: acc) in
+      get_list_of_untils_aux f2 acc
+    | _ -> acc in
+  get_list_of_untils_aux f []
