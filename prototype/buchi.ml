@@ -189,11 +189,19 @@ let create_transition_state_to_state from_state to_state =
 let create_all_transitions states =
   let n = List.length states in
   let transitions = Hashtbl.create n in
-  List.iter (fun from_state -> let transition' = Hashtbl.create n in
+  let _ = List.iter (fun from_state -> let transition' = Hashtbl.create n in
                                let _ = List.iter (fun to_state -> try let set = create_transition_state_to_state from_state to_state in
                                                                       Hashtbl.add transition' to_state set;
                                                                   with _ -> ())
                                          states in
                                Hashtbl.add transitions from_state transition';)
-    states;;
+            states in
+  transitions;;
                                                                   
+let create_automaton ltl =
+  let alphabet = get_variables ltl in
+  let states = get_states ltl in
+  let init_states = get_initial_states ltl states in
+  let final_states = get_final_states ltl states in
+  let eval = create_all_transitions states in
+  { alphabet; eval; states; final_states; init_states }  
