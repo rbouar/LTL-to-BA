@@ -2,6 +2,8 @@ open Ltl
 
 type state = ltlFormula list;;
 
+exception InvalidTransition of state * ltlFormula * state;;
+
 let state_to_string s =
   let rec state_to_string_aux s res = match s with
     | [] -> res ^ "}"
@@ -30,13 +32,17 @@ let rec add_all_ltl_to_state s l = match l with
   | [] -> s
   | f :: l -> add_all_ltl_to_state (add_ltl_to_state s f) l
 
+(* Automate de Buchi (non déterministe) *)
 type buchi = {
-  alphabet : SetString.t;
-  eval : (state, (state, SetString.t) Hashtbl.t) Hashtbl.t;
-  states : state list;
-  final_states : state list;
-  init_states : state list;
-}
+    (* Ensemble fini représentant l'alphabet *)
+    alphabet : SetString.t;    
+    eval : (state, (state, SetString.t) Hashtbl.t) Hashtbl.t;
+    
+    (* Ensemble fini contenant tous les états *)
+    states : state list;
+    final_states : state list;
+    init_states : state list;
+  }
 
 let add_const_to_states b states =
   let rec add_const_to_states_aux b states acc = match states with
@@ -164,3 +170,30 @@ let get_final_states f states =
       then get_final_states_aux states (s :: acc)
       else get_final_states_aux states acc in
   get_final_states_aux states []
+
+
+let create_transition_state_to_state from_state to_state =
+  let step set ltl =
+    match ltl with
+    | Var s -> SetString.add s set
+    | Next f as f' -> if List.mem f to_state
+                      then set
+                      else raise (InvalidTransition (from_state, f', to_state))
+    | Until (f1, f2) as f -> if (List.mem f2 to_state) || ((List.mem f1 from_state) && (List.mem f to_state))
+                             then set
+                             else raise (InvalidTransition (from_state, f, to_state))
+    | Const false as f -> raise (InvalidTransition (from_state, f, to_state))
+    | _ -> set in
+  List.fold_left step SetString.empty from_state
+
+let create_all_transitions states =
+  let n = List.length states in
+  let transitions = Hashtbl.create n in
+  List.iter (fun from_state -> let transition' = Hashtbl.create n in
+                               let _ = List.iter (fun to_state -> try let set = create_transition_state_to_state from_state to_state in
+                                                                      Hashtbl.add transition' to_state set;
+                                                                  with _ -> ())
+                                         states in
+                               Hashtbl.add transitions from_state transition';)
+    states;;
+                                                                  
