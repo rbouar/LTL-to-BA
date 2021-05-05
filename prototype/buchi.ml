@@ -4,19 +4,14 @@ type state = ltlFormula list;;
 
 exception InvalidTransition of state * ltlFormula * state;;
 
-let state_to_string s =
-  let rec state_to_string_aux s res = match s with
-    | [] -> res ^ "}"
-    | [f] -> res ^ (ltlFormula_to_string f) ^ "}"
-    | f :: s -> state_to_string_aux s (res ^ (ltlFormula_to_string f) ^ ", ")
-  in state_to_string_aux s "{"
+
+let state_to_string state =
+  "{" ^ String.concat ", " (List.map ltlFormula_to_string state) ^ "}"
 
 let states_to_string states =
-  let rec states_to_string_aux states res = match states with
-    | [] -> res ^ "}"
-    | [s] -> res ^ (state_to_string s) ^ "}"
-    | s :: states -> states_to_string_aux states (res ^ (state_to_string s) ^ ", ")
-  in states_to_string_aux states "{"
+  "{" ^ String.concat ", " (List.map state_to_string states) ^ "}"  
+
+
 
 
 let rec is_in_state s ltlf = match s with
