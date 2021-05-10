@@ -20,7 +20,7 @@ let export_transitions transitions channel =
          (fun dest alph -> output_string channel (one_transition_to_string from dest alph))
          hash_dest))
         transitions
-
+(* Exporte un automate de Büchi au format dot *)
 let buchi_to_dot buchi filename =
   let _ = remove_if_exist filename in
   let c_out = open_out filename in

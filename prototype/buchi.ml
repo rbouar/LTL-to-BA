@@ -170,14 +170,21 @@ let get_final_states f states =
 let create_transition_state_to_state from_state to_state =
   let step set ltl =
     match ltl with
+    | Const false as f -> raise (InvalidTransition (from_state, f, to_state))
     | Var s -> SetString.add s set
+    | Or (f1, f2) as f-> if (List.mem f1 to_state) || (List.mem f2 to_state)
+                         then set
+                         else raise (InvalidTransition (from_state, f, to_state))
+    | And (f1, f2) as f-> if (List.mem f1 to_state) && (List.mem f2 to_state)
+                          then set
+                          else raise (InvalidTransition (from_state, f, to_state))
     | Next f as f' -> if List.mem f to_state
                       then set
                       else raise (InvalidTransition (from_state, f', to_state))
     | Until (f1, f2) as f -> if (List.mem f2 to_state) || ((List.mem f1 from_state) && (List.mem f to_state))
                              then set
                              else raise (InvalidTransition (from_state, f, to_state))
-    | Const false as f -> raise (InvalidTransition (from_state, f, to_state))
+    
     | _ -> set in
   List.fold_left step SetString.empty from_state
 
