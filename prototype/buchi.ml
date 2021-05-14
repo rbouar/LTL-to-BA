@@ -167,36 +167,36 @@ let get_final_states f states =
   get_final_states_aux states []
 
 
-let create_transition_state_to_state from_state to_state =
-  let step set ltl =
+let can_create_transition from_state to_state =
+  let rec check ltl =
     match ltl with
-    | Const false as f -> raise (InvalidTransition (from_state, f, to_state))
-    | Var s -> SetString.add s set
-    | Or (f1, f2) as f-> if (List.mem f1 to_state) || (List.mem f2 to_state)
-                         then set
-                         else raise (InvalidTransition (from_state, f, to_state))
-    | And (f1, f2) as f-> if (List.mem f1 to_state) && (List.mem f2 to_state)
-                          then set
-                          else raise (InvalidTransition (from_state, f, to_state))
-    | Next f as f' -> if List.mem f to_state
-                      then set
-                      else raise (InvalidTransition (from_state, f', to_state))
-    | Until (f1, f2) as f -> if (List.mem f2 to_state) || ((List.mem f1 from_state) && (List.mem f to_state))
-                             then set
-                             else raise (InvalidTransition (from_state, f, to_state))
-    
-    | _ -> set in
-  List.fold_left step SetString.empty from_state
+    | Const false -> false
+    | Or (f1, f2) -> (List.mem f1 to_state) || (List.mem f2 to_state)
+    | And (f1, f2) -> (List.mem f1 to_state) && (List.mem f2 to_state)
+    | Next f -> List.mem f to_state
+    | Until (f1, f2) as f -> (List.mem f2 to_state) || ((List.mem f1 from_state) && (List.mem f to_state))
+    | Not (Var _) -> true
+    | Not f -> not (check f)
+    | _ -> true
+  in List.for_all check from_state;;
+
+let get_variables_from_state state =
+  List.fold_left (fun set ltl -> match ltl with
+                                 | Var s -> SetString.add s set
+                                 | _ -> set)
+    SetString.empty
+    state;;
+                                    
 
 let create_all_transitions states =
   let n = List.length states in
   let transitions = Hashtbl.create n in
   let _ = List.iter (fun from_state -> let transition' = Hashtbl.create n in
-                               let _ = List.iter (fun to_state -> try let set = create_transition_state_to_state from_state to_state in
-                                                                      Hashtbl.add transition' to_state set;
-                                                                  with _ -> ())
-                                         states in
-                               Hashtbl.add transitions from_state transition';)
+                                       let _ = List.iter (fun to_state -> if can_create_transition from_state to_state
+                                                                          then Hashtbl.add transition' to_state (get_variables_from_state from_state)
+                                                                          else ())
+                                                 states in
+                                       Hashtbl.add transitions from_state transition';)
             states in
   transitions;;
                                                                   
