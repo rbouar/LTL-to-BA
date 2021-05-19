@@ -174,7 +174,7 @@ let can_create_transition from_state to_state =
     | Or (f1, f2) -> (List.mem f1 to_state) || (List.mem f2 to_state)
     | And (f1, f2) -> (List.mem f1 to_state) && (List.mem f2 to_state)
     | Next f -> List.mem f to_state
-    | Until (f1, f2) as f -> (List.mem f2 to_state) || ((List.mem f1 from_state) && (List.mem f to_state))
+    | Until (f1, f2) as f -> (List.mem f2 from_state) || ((List.mem f1 from_state) && (List.mem f to_state))
     | Not (Var _) -> true
     | Not f -> not (check f)
     | _ -> true
