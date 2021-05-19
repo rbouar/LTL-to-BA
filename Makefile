@@ -17,3 +17,6 @@ rapport.pdf: rapport/rapport.tex | rapport_aux
 clean:
 	make -C prototype clean
 	rm -rf rapport_aux/ rapport.pdf
+
+topdf: buchi.dot
+	dot -Tpdf buchi.dot -o buchi.pdf

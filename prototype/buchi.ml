@@ -2,19 +2,16 @@ open Ltl
 
 type state = ltlFormula list;;
 
-let state_to_string s =
-  let rec state_to_string_aux s res = match s with
-    | [] -> res ^ "}"
-    | [f] -> res ^ (ltlFormula_to_string f) ^ "}"
-    | f :: s -> state_to_string_aux s (res ^ (ltlFormula_to_string f) ^ ", ")
-  in state_to_string_aux s "{"
+exception InvalidTransition of state * ltlFormula * state;;
+
+
+let state_to_string state =
+  "{" ^ String.concat ", " (List.map ltlFormula_to_string state) ^ "}"
 
 let states_to_string states =
-  let rec states_to_string_aux states res = match states with
-    | [] -> res ^ "}"
-    | [s] -> res ^ (state_to_string s) ^ "}"
-    | s :: states -> states_to_string_aux states (res ^ (state_to_string s) ^ ", ")
-  in states_to_string_aux states "{"
+  "{" ^ String.concat ", " (List.map state_to_string states) ^ "}"  
+
+
 
 
 let rec is_in_state s ltlf = match s with
@@ -30,13 +27,17 @@ let rec add_all_ltl_to_state s l = match l with
   | [] -> s
   | f :: l -> add_all_ltl_to_state (add_ltl_to_state s f) l
 
+(* Automate de Buchi (non déterministe) *)
 type buchi = {
-  alphabet : SetString.t;
-  eval : (state, (state, SetString.t) Hashtbl.t) Hashtbl.t;
-  states : state list;
-  final_states : state list;
-  init_states : state list;
-}
+    (* Ensemble fini représentant l'alphabet *)
+    alphabet : SetString.t;    
+    eval : (state, (state, SetString.t) Hashtbl.t) Hashtbl.t;
+    
+    (* Ensemble fini contenant tous les états *)
+    states : state list;
+    final_states : state list;
+    init_states : state list;
+  }
 
 let add_const_to_states b states =
   let rec add_const_to_states_aux b states acc = match states with
@@ -164,3 +165,45 @@ let get_final_states f states =
       then get_final_states_aux states (s :: acc)
       else get_final_states_aux states acc in
   get_final_states_aux states []
+
+
+let can_create_transition from_state to_state =
+  let rec check ltl =
+    match ltl with
+    | Const false -> false
+    | Or (f1, f2) -> (List.mem f1 to_state) || (List.mem f2 to_state)
+    | And (f1, f2) -> (List.mem f1 to_state) && (List.mem f2 to_state)
+    | Next f -> List.mem f to_state
+    | Until (f1, f2) as f -> (List.mem f2 from_state) || ((List.mem f1 from_state) && (List.mem f to_state))
+    | Not (Var _) -> true
+    | Not f -> not (check f)
+    | _ -> true
+  in List.for_all check from_state;;
+
+let get_variables_from_state state =
+  List.fold_left (fun set ltl -> match ltl with
+                                 | Var s -> SetString.add s set
+                                 | _ -> set)
+    SetString.empty
+    state;;
+                                    
+
+let create_all_transitions states =
+  let n = List.length states in
+  let transitions = Hashtbl.create n in
+  let _ = List.iter (fun from_state -> let transition' = Hashtbl.create n in
+                                       let _ = List.iter (fun to_state -> if can_create_transition from_state to_state
+                                                                          then Hashtbl.add transition' to_state (get_variables_from_state from_state)
+                                                                          else ())
+                                                 states in
+                                       Hashtbl.add transitions from_state transition';)
+            states in
+  transitions;;
+                                                                  
+let create_automaton ltl =
+  let alphabet = get_variables ltl in
+  let states = get_states ltl in
+  let init_states = get_initial_states ltl states in
+  let final_states = get_final_states ltl states in
+  let eval = create_all_transitions states in
+  { alphabet; eval; states; final_states; init_states }  
