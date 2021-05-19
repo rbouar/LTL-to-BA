@@ -3,3 +3,9 @@
 prototype/.merlin
 prototype/_build
 prototype/main.exe
+
+buchi.dot
+buchi.pdf
+
+rapport_aux/
+rapport.pdf
