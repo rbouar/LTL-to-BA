@@ -3,6 +3,26 @@
 \usepackage[french]{babel}
 \usepackage[T1]{fontenc}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+% quelques définitions
+\theoremstyle{plain}
+\newtheorem{thm}{Théorème}
+\newtheorem{cor}[thm]{Corollaire}
+\newtheorem{lem}[thm]{Lemme}
+\newtheorem{prop}{Proposition}
+\newtheorem{dem}{Démonstration}
+
+\theoremstyle{definition}
+\newtheorem{defi}{Définition}
+\newtheorem{rmq}{Remarque}
+\newtheorem{ex}{Exemple}
+
 \title {Automates et logique temporelle LTL}
 \author{
   Souffan Nathan \and
@@ -13,5 +33,74 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
+
+\section{Introduction}
+
+\section{Logique temporelle}
+\subsection{LTL}
+%\subsection{CTL}
+
+\section{Automate de Büchi}
+Les automates de Büchi sont un type particulier d'automate sur les mots infinis.
+Les automates sur les mots infinis (ou $\omega$-automates) sont des automates finis qui acceptent des mots infinis.
+
+\begin{defi}[Automate de Büchi]
+  Un automate de Büchi est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathcal{F})$ où :
+  \begin{itemize}
+  \item $\Sigma$ est un ensemble fini appelé alphabet de $\mathcal{A}$.
+  \item $Q$ est un ensemble fini. Les éléments de $Q$ sont les états de $\mathcal{A}$.
+  \item $Q_I \subseteq Q$ est l'ensemble des états initiaux.
+  \item $\Delta \subset Q \times \Sigma \times Q$ est l'ensemble des transitions.
+  \item $\mathcal{F} \subseteq Q$ est l'ensemble des états finaux (ou états acceptants).
+    Un mot est accepté s'il passe une infinité de fois par au moins un état de $\mathcal{F}$.
+  \end{itemize}
+
+  Plus formellement, un mot est accepté par $\mathcal{A}$ si pour sa trace $\rho$ on a $Etats_{\#\infty}(\rho) \cap \mathcal{F} \neq \varnothing$, où :
+  \begin{itemize}
+  \item $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$
+  \item La trace est définie ci-dessous
+  \end{itemize}
+\end{defi}
+
+
+
+\begin{defi}[Trace]
+  Une trace (aussi appelée un calcul ou un chemin) est une suite infinie de transitions consécutives : $\rho = (q_0,a_0,q_1)(q_1,a_1,q_2)\dots$.
+  On peut aussi décrire la trace d'un mot par sa succession d'états, c'est-à-dire $\rho = q_0q_1q_2\dots$.
+\end{defi}
+
+\begin{ex}
+  On pose l'automate de Büchi suivant $\mathcal{A}=(\{a,b\}, \{q_0, q_1\}, \{q_0\}, \Delta, \{q_1\})$.
+  L'ensemble des transitions $\Delta$ est donné dans la figure.
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=$ $, on grid]
+      \node[state, initial] (q0) {$q_0$};
+      \node[state, accepting, right of=q0] (q1) {$q_1$};
+      \draw (q0) edge[bend left, above] node{a} (q1)
+      (q1) edge[bend left, below] node{b} (q0)
+      (q1) edge[loop above] node{a} (q1);
+    \end{tikzpicture}    
+    \caption{Automate de Büchi}
+  \end{figure}
+  
+  Cet automate reconnaît le mot $aaa\dots$ car dans sa trace $q_0q_1q_1\dots$ l'état $q_1$ apparaît une infinité de fois.
+  En fait, le langage reconnu (ou accepté) est $aa^\omega | a(a^*ba)^\omega$.
+\end{ex}
+
+Les automates de Büchi généralisés sont une variante des automates de Büchi.
+La différence se situe sur la condition d'acceptation.
+\begin{defi}[Automate de Büchi généralisé]
+Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathcal{F})$ où :
+  \begin{itemize}
+  \item $\Sigma, Q, Q_I, \Delta$ sont comme précédemment.
+  \item $\mathcal{F} \subseteq \mathcal{P}(Q)$ est la condition d'acceptation.
+    $\mathcal{F}$ est un ensemble d'ensembles finaux.
+  \end{itemize}
+
+  Un mot $w$ (ou une exécution) est accepté par $\mathcal{A}$ si pour tout $F \in \mathcal{F}$ il existe $S \in Etats_{\#\infty}(w)$ tel que $S \in F$.
+  Autrement dit, $w$ est accepté si on passe une infinité de fois par au moins un des états des $F \in \mathcal{F}$.
+\end{defi}
 
 \end{document}
