@@ -2,6 +2,8 @@
 
 \usepackage[french]{babel}
 \usepackage[T1]{fontenc}
+\usepackage{amssymb}
+
 
 \title {Automates et logique temporelle LTL}
 \author{
@@ -13,5 +15,42 @@
 
 \begin{document}
 \maketitle
+\newpage
+
+\section{Logique temporelle}
+
+Si pour la logique une propriété ne peut être que vrai ou fausse, celle ci peut être vrai à un certain moment puis fausse par la suite en logique temporelle. On peut considérer plusieurs espace temps. On peut prendre le temps comme étant $\mathbb{R}$, $\mathbb{Z}$ ou encore comme ce sera le cas par la suite $\mathbb{N}$. Celle ci s'appelle la logique \underline{LTL} (Logique Temporelle Linéaire).
+
+\subsection{LTL}
+On se place donc dans le cas d'une logique temporelle linéaire, On défini $AP$ l'ensemble des propositions atomiques. Il y a alors une valuation des $AP$ pour chaque $n$ dans $\mathbb{N}$.
+
+\subsubsection{Syntaxe}
+\subsubsection{Sémantique}
+Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiqueté $(p, l)$ où $p \in Q^{\omega}$ et $l : Q \to 2^{AP}$. \\
+On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ le long de $(p, l)$ et on a: 
+\begin{itemize}
+	\item $p, l, i \models P \Leftrightarrow P \in l(p(i))$ 
+	\item $p, l, i \models \varphi \land \psi \Leftrightarrow [(p,l,i \models \varphi) \textrm{ et } (p,l,i \models \psi)]$
+	\item $p,l,i \models \varphi \lor \psi \Leftrightarrow [(p,l,i \models \varphi)\textrm{ ou } (p,l,i \models \psi)]$
+	\item $p,l,i \models \lnot \varphi \Leftrightarrow p,l,i \not \models \varphi$
+	\item $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
+	\item $p,l,i \models F\varphi \Leftrightarrow [\exists j \geq i, p,l,j \models \varphi]$
+	\item $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i, \:\: p,l,i \models \varphi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,i\models \varphi]$
+	\item $p,l,i \models G\varphi \Leftrightarrow p,l,i \models \lnot F\lnot \varphi$
+	
+\end{itemize}
+On ajoute à cela, $\varphi \equiv \psi \Leftrightarrow [p,l,i \models \varphi \Leftrightarrow p,l,i \models \psi]$\\
+\vspace*{2mm}
+\underline{Exemples}: \\
+$a, b \in AP$
+\begin{itemize}
+	\item $GFa$: (toujours(futur $a$)) ce qui signifie il y a une infinité de positions où $a$ est vrai.
+	\item $aU(Gb)$: $a$ est vrai tant que $b$ est faux, dès que $a$ est faux, $b$ est toujours vrai par la suite
+	\item $(a\lor b ) U a \equiv G(a \lor b)$ car la première formule signifie on a $a$ dès qu'on à pas $a\lor b$ donc on doit toujours avoir $a \lor b$
+	
+\end{itemize}
+
+
+
 
 \end{document}
