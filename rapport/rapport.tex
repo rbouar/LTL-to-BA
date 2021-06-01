@@ -5,6 +5,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{tikz}
+
+
 
 % quelques définitions
 \theoremstyle{plain}
@@ -47,15 +50,15 @@ On définit l'ensemble des formules propositionnelles comme l'ensemble engendré
 	\item[] \textbf{Négation} Si $\varphi$ est une formule propositionnelle, $\lnot \varphi$ en est aussi une.
 	\item[] \textbf{Conjonction} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi\land \psi)$ est une formule propositionnelle.
 	\item[] \textbf{Disjonction} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi\lor \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Implication} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi \to \psi)$ est une variable propositionnelle.
+	\item[] \textbf{Implication} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi \to \psi)$ est une formule propositionnelle.
 	\item[] \textbf{Suivant (next)} Si $\varphi$ est une formule propositionnelle, $X\varphi$ est une formule propositionnelle.
 	\item[] \textbf{Jusqu'à (Until)} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi U \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Toujours (Golbally)}. Si $\varphi$ est une formule propositionnelle, $G\varphi$ est une formule propositionnelle.
+	\item[] \textbf{Toujours (Globally)}. Si $\varphi$ est une formule propositionnelle, $G\varphi$ est une formule propositionnelle.
 \end{itemize}
 
 \subsubsection{Sémantique}
-On pose $Q=\{q_1, \dots q_n\}$ un ensemble d'états  Pour les formules LTL, les modèles sont des couples $(p, l)$ où $p \in Q$
-Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiqueté $(p, l)$ où $p \in Q^{\omega}$ et $l : Q \to 2^{AP}$. $l$ nous indique quels atomes sont vraies pour chaque états. \\
+On pose $Q=\{q_1, \dots q_n\}$ un ensemble d'états  Pour les formules LTL, les modèles sont des couples $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$, $l$ nous indique ainsi quels atomes sont vraies  pour chaque états. \\
+Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiqueté $(p, l)$. \\
 On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ le long de $(p, l)$, de plus on définit l'équivalence $\equiv$ en posant: $\varphi \equiv \psi \textrm{ si } [p,l,i \models \varphi \Leftrightarrow p,l,i \models \psi]$
 \begin{itemize}
 	\item[] $p, l, i \models v \Leftrightarrow v \in l(p(i))$ où $v \in AP$
@@ -64,13 +67,63 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\item[] $p,l,i \models \varphi \lor \psi \Leftrightarrow [(p,l,i \models \varphi)\textrm{ ou } (p,l,i \models \psi)]$
 	\item[] $p,l,i \models \lnot \varphi \Leftrightarrow p,l,i \not \models \varphi$
 	\item[] $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
-	\item[] $p,l,i \models F\varphi \Leftrightarrow [\exists j \geq i, p,l,j \models \varphi]$
-	\item[] $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i, \:\: p,l,i \models \varphi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,i\models \varphi]$
+	\item[] $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,k\models \varphi]$
+	\item[] $\top = \lnot \bot$
+	\item[] $F\varphi = \top U \varphi$
 	\item[] $G\varphi = \lnot F \lnot \varphi$
 	\item[] $(\varphi \to \psi) = (\lnot \psi \lor \varphi)$
-	
 \end{itemize}
-\vspace*{2mm}
+
+\paragraph{Représentations}
+\begin{itemize}
+	
+	\item[] $\varphi U \psi$ \\
+	\shorthandoff{:}
+	\begin{tikzpicture}[scale=1]
+		\draw[->] (0,0) -- (10.5,0) node[right] {};
+		\foreach \x in {0,...,4} {\draw (\x,0.1cm) -- (\x,-0.1cm) node[below] {$\phantom{-}\strut$};}
+		\foreach \x in {0,...,4} {\draw (\x, 0.1cm) -- (\x, -0.1cm) node[above] {$\varphi \strut$};}
+		\draw (0,0) -- (0,0) node[below]{$i \phantom{-}\strut$}; 
+		\draw (5,0) -- (5,0) node [above] {$\phantom{-}\dots \strut$};
+		\draw (8,0.1cm) -- (8,-0.1cm) node [above] {$\psi \strut$};
+		\draw (8.2,0) node [below] {$j \phantom{-} \strut$};
+		\begin{scope}
+			\clip (-2,2) rectangle (2,2);
+		\end{scope}
+	\end{tikzpicture}\shorthandon{:}\\
+	\item[] 
+\end{itemize}
+
+\begin{prop}
+	\leavevmode 
+	\begin{enumerate}
+		\item $p,l,i \models \top$
+		\item $p,l,i \models F\varphi \Leftrightarrow p,l,i \models [\exists j \geq i \textrm{ tel que } p,l,j \models \varphi]$
+		\item $p,l,i \models G\varphi \Leftrightarrow p,l,i \models [\forall j \geq i \textrm{, on a, } p,l,j \models \varphi]$
+	\end{enumerate}
+\end{prop}
+
+\begin{dem}
+	\leavevmode
+	\begin{enumerate}
+		\item Trivial
+		\item 
+		\begin{align*}
+			p,l,i \models F\varphi &\Leftrightarrow p,l,i \models \top U \varphi \\
+			&\Leftrightarrow p,l,i \models [\exists j \geq i \textrm{ tel que } p,l,j \models \varphi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,k\models \top] \\
+			&\Leftrightarrow p,l,i \models [\exists j \geq i \text{ tel que } p,l,j \models \varphi]
+		\end{align*}
+		\item 
+		\begin{align*}
+			p,l,i \models G \varphi &\Leftrightarrow p,l,i \models \lnot F \lnot \varphi \\
+			&\Leftrightarrow p,l,i \not \models F \lnot \varphi \\
+			&\Leftrightarrow p,l,i \not \models [\exists j \geq i \textrm{ tel que } p,l,j \models \lnot \varphi] \\
+			&\Leftrightarrow p,l,i \not \models [\exists j \geq i \textrm{ tel que } p,l,j \not \models \varphi] \\
+			&\Leftrightarrow p,l,i \models [\forall j \geq i \textrm{ on a } p,l,j \models \varphi]
+		\end{align*}
+	\end{enumerate}
+\end{dem}
+
 \begin{ex} 
 	\leavevmode \newline
 	$a, b \in AP$
@@ -82,7 +135,7 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 \end{ex}
 Les propriétés sur les opérateurs de la logique usuel reste vrais dans la logique temporelle. On peut ajouter des propriétés sur les opérateurs de la logiques temporelle.
 \begin{prop} 
-	\leavevmode \newline
+	\leavevmode 
 	\begin{enumerate}
 		% Negation:
 		\item $\lnot (X \varphi) \equiv X(\lnot \varphi)$
@@ -109,7 +162,7 @@ Les propriétés sur les opérateurs de la logique usuel reste vrais dans la log
 \end{prop}
 
 \begin{dem}
-	\leavevmode \newline
+	\leavevmode 
 	\begin{enumerate}
 		\item[2.] 
 		\begin{align*}
@@ -118,9 +171,12 @@ Les propriétés sur les opérateurs de la logique usuel reste vrais dans la log
 			 &\Leftrightarrow \exists j \geq i \textrm{ tel que } p,l,j \not \models \varphi \\
 			 &\Leftrightarrow \exists j \geq i \textrm{ tel que } p,l,j \models \lnot \varphi \\
 			 &\Leftrightarrow p,l,i \models F (\lnot \varphi)
-		\end{align*}
+		\end{align*}	
+		
+		\item[] Toutes les preuves reposent sur ce type de démonstration, on laisse les autres en exercices.
 	\end{enumerate}
 \end{dem}
+
 
 
 
