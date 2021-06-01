@@ -7,6 +7,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{mathrsfs}
+
 \usepackage{tikz}
 
 
@@ -193,17 +195,17 @@ Les automates de Büchi sont un type particulier d'automate sur les mots infinis
 Les automates sur les mots infinis (ou $\omega$-automates) sont des automates finis qui acceptent des mots infinis.
 
 \begin{defi}[Automate de Büchi]
-  Un automate de Büchi est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathcal{F})$ où :
+  Un automate de Büchi est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
   \begin{itemize}
   \item $\Sigma$ est un ensemble fini appelé alphabet de $\mathcal{A}$.
   \item $Q$ est un ensemble fini. Les éléments de $Q$ sont les états de $\mathcal{A}$.
   \item $Q_I \subseteq Q$ est l'ensemble des états initiaux.
   \item $\Delta \subset Q \times \Sigma \times Q$ est l'ensemble des transitions.
-  \item $\mathcal{F} \subseteq Q$ est l'ensemble des états finaux (ou états acceptants).
-    Un mot est accepté s'il passe une infinité de fois par au moins un état de $\mathcal{F}$.
+  \item $\mathscr{F} \subseteq Q$ est l'ensemble des états finaux (ou états acceptants).
+    Un mot est accepté s'il passe une infinité de fois par au moins un état de $\mathscr{F}$.
   \end{itemize}
 
-  Plus formellement, un mot est accepté par $\mathcal{A}$ si pour son exécution $\rho$ on a $Etats_{\#\infty}(\rho) \cap \mathcal{F} \neq \varnothing$, où :
+  Plus formellement, un mot est accepté par $\mathcal{A}$ si pour son exécution $\rho$ on a $Etats_{\#\infty}(\rho) \cap \mathscr{F} \neq \varnothing$, où :
   \begin{itemize}
   \item $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$
   \item Une exécution est définie ci-dessous
@@ -241,15 +243,15 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
 Les automates de Büchi généralisés sont une variante des automates de Büchi.
 La différence se situe sur la condition d'acceptation.
 \begin{defi}[Automate de Büchi généralisé]
-Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathcal{F})$ où :
+Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
   \begin{itemize}
   \item $\Sigma, Q, Q_I, \Delta$ sont comme précédemment.
-  \item $\mathcal{F} \subseteq \mathcal{P}(Q)$ est la condition d'acceptation.
-    $\mathcal{F}$ est un ensemble d'ensembles finaux.
+  \item $\mathscr{F} \subseteq \mathcal{P}(Q)$ est la condition d'acceptation.
+    $\mathscr{F}$ est un ensemble d'ensembles finaux.
   \end{itemize}
 
-  Un chemin $c$ est accepté par $\mathcal{A}$ si pour tout $F \in \mathcal{F}$ il existe $S \in Etats_{\#\infty}(c)$ tel que $S \in F$.
-  Autrement dit, $\mathcal{A}$ reconnaît $c$ si on passe infiniment souvent par un des états de chaque $F \in \mathcal{F}$.
+  Un chemin $c$ est accepté par $\mathcal{A}$ si pour tout $F \in \mathscr{F}$ il existe $S \in Etats_{\#\infty}(c)$ tel que $S \in F$.
+  Autrement dit, $\mathcal{A}$ reconnaît $c$ si on passe infiniment souvent par un des états de chaque $F \in \mathscr{F}$.
 \end{defi}
 
 \subsection{Traduction de formule LTL en automate de Büchi}
@@ -269,9 +271,17 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q$ et $\psi_2 \in q$.
   \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q$ ou $\psi_2 \in q$.
   \item $\psi \in q \iff \lnot \psi \not\in q$.
-  \item Si $\lnot (\psi_1 \land \psi_2) \in q$ alors $\psi_1 \not \in q$ et $\psi_2 \not \in q$ en même temps.
   \end{enumerate}
 \end{defi}
+
+\begin{rmq}
+  En utilisant les lois de Morgan, on en déduit aussi que :
+  \begin{enumerate}[(i)]
+  \item Si $\lnot (\psi_1 \land \psi_2) \in q$ alors $\psi_1 \not \in q$ ou $\psi_2 \not \in q$.
+  \item Si $\lnot (\psi_1 \lor \psi_2) \in q$ alors $\psi_1 \not \in q$ et $\psi_2 \not \in q$.
+  \end{enumerate}
+\end{rmq}
+
 
 \begin{defi}[Sous-ensemble maximal]
   Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.  
@@ -292,7 +302,7 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   \]
   \begin{enumerate}
   \item $q_1 = \{\lnot a, b, Xb, a U (Xb)\}$ est un sous-ensemble cohérent, maximal et conforme à la sémantique de LTL.
-  \item $ $.
+  \item ...
   \end{enumerate}
 \end{ex}
 
@@ -300,16 +310,31 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   Soit $AP$ l'ensemble des propositions atomiques et $\varphi$ une formule LTL sur $AP$, alors $\mathcal{L}(\mathcal{A}_\varphi) = mod(\varphi)$
   où $\mathcal{A}_\varphi$ est l'automate de Büchi généralisé donné ci-dessous.
 
-  \noindent
-  On définit $\mathcal{A}_\varphi = (2^{AP}, Q, Q_I, \Delta, \mathcal{F})$ où :
-  \begin{enumerate}
-  \item $Q \subset 2^{SubF(\varphi)}$ contient tout les sous-ensembles de $SubF(\varphi)$ qui sont cohérents, maximaux et conformes à la sémantique de LTL.
-  \item $Q_I = \{ q \subset SubF(\varphi) | \varphi \in q \}$. Autrement dit, tous les états contenant notre formule de départ $\varphi$ sont des états initiaux.
-  \item $\Delta$
-  \item $\mathcal{F}$
-  \end{enumerate}
+  % \noindent
+  On définit $\mathcal{A}_\varphi = (2^{AP}, Q, Q_I, \Delta, \mathscr{F})$ où :
+  \begin{itemize}
+  \item $Q \subseteq 2^{SubF(\varphi)}$ contient tout les sous-ensembles de $SubF(\varphi)$ qui sont cohérents, maximaux et conformes à la sémantique de LTL.
+  \item $Q_I = \{ q \subseteq SubF(\varphi) | \varphi \in q \}$. Autrement dit, tous les états contenant exactement notre formule de départ $\varphi$ sont des états initiaux.
+  \item $\Delta$ est l'ensemble des transitions $(q, a, q')$ avec $q, q' \subseteq SubF(\varphi)$ et $a \in 2^{AP}$ vérifiant :
+    \begin{itemize}
+    \item $\bot \not \in q$
+    \item $\forall p \in AP \quad p \in q \iff p \in a$ (i.e. $a$ possède toutes les propositions atomiques de $q$)
+    \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q'$ ou $\psi_2 \in q'$
+    \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q'$ et $\psi_2 \in q'$
+    \item Si $X\psi \in q$ alors $\psi \in q'$
+    \item Si $\psi_1 U \psi_2 \in q$ alors $\psi_2 \in q'$ ou $\{\psi_1, \psi_1 U \psi_2\} \subseteq q'$
+    \item Si $\lnot \psi \in q$ alors ...
+    \end{itemize}
+  \item $\mathscr{F} = \{F_{\psi_1 U \psi_2} | \psi_1 U \psi_2 \in SubF(\varphi)\}$ où
+    \[
+      F_{\psi_1 U \psi_2} = \{q \in Q | \psi_1 U \psi_2 \not \in q \lor \psi_2\in q \}
+    \]
+  \end{itemize}
 \end{thm}
 
+\begin{proof}
+  ...
+\end{proof}
 
 
 \end{document}
