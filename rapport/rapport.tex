@@ -50,24 +50,31 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
   \item $Q_I \subseteq Q$ est l'ensemble des états initiaux.
   \item $\Delta \subset Q \times \Sigma \times Q$ est l'ensemble des transitions.
   \item $\mathscr{F} \subseteq Q$ est l'ensemble des états finaux (ou états acceptants).
-    Un mot est accepté s'il passe une infinité de fois par au moins un état de $\mathscr{F}$.
-  \end{itemize}
-
-  Plus formellement, un mot est accepté par $\mathcal{A}$ si pour son exécution $\rho$ on a $Etats_{\#\infty}(\rho) \cap \mathscr{F} \neq \varnothing$, où :
-  \begin{itemize}
-  \item $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$
-  \item Une exécution est définie ci-dessous
+    Un mot $w$ est accepté s'il existe une exécution acceptante de $\mathcal{A}$ sur $w$.
   \end{itemize}
 \end{defi}
 
 \begin{defi}[Exécution]
-  Une exécution (ou un chemin ou un calcul) est une suite infinie de transitions consécutives : $\rho = (q_0,a_0,q_1)(q_1,a_1,q_2)\dots$.
+  Soient $w \in \Sigma^\omega$ un mot infini et $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ un automate de Büchi.
+  Une exécution de $\mathcal{A}$ sur $w$ est une suite infinie $\rho = q_0q_1q_2\dots \in Q^\omega$ telle que :
+  \[
+    \forall i \geq 0 \quad (q_i, w_i, q_{i+1}) \in \Delta
+  \]
 \end{defi}
 
-\begin{defi}[Trace]
-  La trace (aussi appelée étiquette) d'une exécution est la suite des lettres, donc un mot.
-  Si on a pour exécution $\rho = (q_0,a_0,q_1)(q_1,a_1,q_2)\dots$ alors la trace de $\rho$ est le mot $a_0a_1\dots$.
+\begin{defi}[Exécution acceptante]  
+  Soient $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ un automate de Büchi et $\rho \in Q^\omega$ une exécution de $\mathcal{A}$.
+  On dit que $\rho$ est une exécution acceptante si :
+  \[
+    Etats_{\#\infty}(\rho) \cap \mathscr{F} \neq \varnothing
+  \]
+  où $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$.
 \end{defi}
+
+% \begin{defi}[Trace]
+%   La trace (aussi appelée étiquette) d'une exécution est la suite des lettres, donc un mot.
+%   Si on a pour exécution $\rho = (q_0,a_0,q_1)(q_1,a_1,q_2)\dots$ alors la trace de $\rho$ est le mot $a_0a_1\dots$.
+% \end{defi}
 
 \begin{ex}
   Soit $\mathcal{A}=(\{a,b\}, \{q_0, q_1\}, \{q_0\}, \Delta, \{q_1\})$ un automate de Büchi.
@@ -84,26 +91,28 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
     \caption{Automate de Büchi}
   \end{figure}
   
-  Cet automate reconnaît le mot $aaa\dots$ car dans sa trace $q_0q_1q_1\dots$ l'état $q_1$ apparaît une infinité de fois.
+  Cet automate reconnaît le mot $w = aaa\dots$ car pour l'exécution $\rho = q_0q_1^\omega$ (c'est la seule) de $\mathcal{A}$ sur $w$, l'état $q_1$ apparaît une infinité de fois dans $\rho$.
   En fait, le langage reconnu (ou accepté) est $aa^\omega | a(a^*ba)^\omega$.
 \end{ex}
 
 Les automates de Büchi généralisés sont une variante des automates de Büchi.
 La différence se situe sur la condition d'acceptation.
 \begin{defi}[Automate de Büchi généralisé]
-Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
+  Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
   \begin{itemize}
   \item $\Sigma, Q, Q_I, \Delta$ sont comme précédemment.
   \item $\mathscr{F} \subseteq \mathcal{P}(Q)$ est la condition d'acceptation.
-    $\mathscr{F}$ est un ensemble d'ensembles finaux.
+    $\mathscr{F}$ est un ensemble d'ensembles finaux. De même, un mot $w$ est accepté s'il existe une exécution acceptante de $\mathcal{A}$ sur $w$.
   \end{itemize}
-
-  Un chemin $c$ est accepté par $\mathcal{A}$ si pour tout $F \in \mathscr{F}$ il existe $S \in Etats_{\#\infty}(c)$ tel que $S \in F$.
-  Autrement dit, $\mathcal{A}$ reconnaît $c$ si on passe infiniment souvent par un des états de chaque $F \in \mathscr{F}$.
+  
 \end{defi}
+Pour un automate de Büchi généralisé, une exécution $\rho$ de $\mathcal{A}$ est acceptante si :
+\[
+  \forall F \in \mathscr{F} \quad Etats_{\#\infty}(\rho) \cap F \neq \varnothing
+\]
 
 \subsection{Traduction de formule LTL en automate de Büchi}
-On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précisèment, on veut construire un automate qui reconnait les modèles de $\varphi$.
+On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précisément, on veut construire un automate qui reconnait les modèles de $\varphi$.
 
 \begin{defi}
   On note $SubF(\varphi)$ l'ensemble des sous formules de $\varphi$ et leur négation.  
@@ -114,8 +123,9 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
 \end{ex}
 
 \begin{defi}[Sous-ensemble cohérent]
-  Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est cohérent si $q$ vérifie toutes les conditions suivantes :
+  $q \in 2^{SubF(\varphi)}$ est cohérent si toutes les conditions suivantes sont vérifiées :
   \begin{enumerate}[(i)]
+  \item $\bot \not \in q$.
   \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q$ et $\psi_2 \in q$.
   \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q$ ou $\psi_2 \in q$.
   \item $\psi \in q \iff \lnot \psi \not\in q$.
@@ -132,11 +142,11 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
 
 
 \begin{defi}[Sous-ensemble maximal]
-  Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.  
+  $q \in 2^{SubF(\varphi)}$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.  
 \end{defi}
 
 \begin{defi}[Sous-ensemble conforme à la sémantique de LTL]
-  Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est conforme à la sémantique de LTL
+  $q \in 2^{SubF(\varphi)}$ est conforme à la sémantique de LTL :
   \begin{enumerate}[(i)]
   \item Si $\psi_1 U \psi_2 \in q$ alors on a soit $\psi_1 \in q$ soit $\psi_2 \in q$.
   \item Si $\psi_1 U \psi_2 \in SubF(\varphi)$, alors si $\psi_2 \in q$, $\psi_1 U \psi_2 \in q$.
@@ -163,15 +173,14 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   \begin{itemize}
   \item $Q \subseteq 2^{SubF(\varphi)}$ contient tout les sous-ensembles de $SubF(\varphi)$ qui sont cohérents, maximaux et conformes à la sémantique de LTL.
   \item $Q_I = \{ q \subseteq SubF(\varphi) | \varphi \in q \}$. Autrement dit, tous les états contenant exactement notre formule de départ $\varphi$ sont des états initiaux.
-  \item $\Delta$ est l'ensemble des transitions $(q, a, q')$ avec $q, q' \subseteq SubF(\varphi)$ et $a \in 2^{AP}$ vérifiant :
+  \item $\Delta$ est l'ensemble des transitions $(q, a, q')$ avec $q, q' \in Q$ et $a \in 2^{AP}$ vérifiant :
     \begin{itemize}
-    \item $\bot \not \in q$
     \item $\forall p \in AP \quad p \in q \iff p \in a$ (i.e. $a$ possède toutes les propositions atomiques de $q$)
-    \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q'$ ou $\psi_2 \in q'$
-    \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q'$ et $\psi_2 \in q'$
-    \item Si $X\psi \in q$ alors $\psi \in q'$
-    \item Si $\psi_1 U \psi_2 \in q$ alors $\psi_2 \in q'$ ou $\{\psi_1, \psi_1 U \psi_2\} \subseteq q'$
-    \item Si $\lnot \psi \in q$ alors ...
+    \item $\forall X\psi \in SubF(\varphi) \quad X\psi \in q \iff \psi \in q'$
+    \item $\forall \psi_1 U \psi_2 \in SubF(\varphi) \quad \psi_1 U \psi_2 \in q \iff \left( \psi_2 \in q \lor (\psi_1 \in q \land \psi_1 U \psi_2 \in q')\right)$
+    \item $\forall \psi_1 \lor \psi_2 \in SubF(\varphi) \quad \psi_1 \lor \psi_2 \in q \iff (\psi_1 \in q' \lor \psi_2 \in q')$
+    \item $\forall \psi_1 \land \psi_2 \in SubF(\varphi) \quad \psi_1 \land \psi_2 \in q \iff (\psi_1 \in q' \land \psi_2 \in q')$
+    \item $\forall \lnot \psi \in SubF(\varphi)$
     \end{itemize}
   \item $\mathscr{F} = \{F_{\psi_1 U \psi_2} | \psi_1 U \psi_2 \in SubF(\varphi)\}$ où
     \[
