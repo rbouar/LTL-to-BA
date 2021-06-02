@@ -31,7 +31,7 @@
 \usetikzlibrary{automata, positioning, arrows}
 
 % Plus d'options sur les listes de type 'enumerate'
-\usepackage{enumerate} 
+\usepackage{enumerate}
 
 
 \title {Automates et logique temporelle LTL}
@@ -48,7 +48,7 @@
 
 \section{Logique temporelle}
 
-Si pour la logique une propriété ne peut être que vrai ou fausse, celle ci peut être vrai à un certain moment puis fausse par la suite en logique temporelle.
+Si pour la logique une propriété ne peut être que vraie ou fausse, celle ci peut être vraie à un certain moment puis fausse par la suite en logique temporelle.
 Il existe plusieurs représentations du temps pour la logique temporelle : arborescente, continue, linéaire, ...
 Pour une représentation linéaire, on peut prendre le temps comme étant $\mathbb{Z}$ pour considérer le passé, ou encore comme ce sera le cas par la suite $\mathbb{N}$.
 Celle ci s'appelle la \underline{LTL} (Logique Temporelle Linéaire).
@@ -58,23 +58,24 @@ On se place donc dans le cas d'une logique temporelle linéaire.
 On définit $AP$ l'ensemble des propositions atomiques. Il y a alors une valuation des $AP$ pour chaque $n$ dans $\mathbb{N}$.
 
 \subsubsection{Syntaxe}
-On définit l'ensemble des formules propositionnelles comme l'ensemble engendré inductivement et librement par les règles de constructions suivantes:
+On définit l'ensemble des formules de LTL comme l'ensemble engendré inductivement et librement par les règles de constructions suivantes:
 \begin{itemize}
-	\item[] \textbf{atomes} Si $p \in AP$ alors $p$ est une formule propositionnelle.
-	\item[] \textbf{absurde} $\bot$ est une formule propositionnelle.
+	\item[] \textbf{Atomes} Si $p \in AP$ alors $p$ est une formule.
+	\item[] \textbf{Absurde} $\bot$ est une formule.
+	\item[] \textbf{Tautologie} $\top$ est une formule.
 	\item[] \textbf{Négation} Si $\varphi$ est une formule propositionnelle, $\lnot \varphi$ en est aussi une.
-	\item[] \textbf{Conjonction} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi\land \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Disjonction} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi\lor \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Implication} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi \to \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Suivant (next)} Si $\varphi$ est une formule propositionnelle, $X\varphi$ est une formule propositionnelle.
-	\item[] \textbf{Jusqu'à (Until)} Si $\varphi$ et $\psi$ sont des formules propositionnelles, $(\varphi U \psi)$ est une formule propositionnelle.
-	\item[] \textbf{Toujours (Globally)}. Si $\varphi$ est une formule propositionnelle, $G\varphi$ est une formule propositionnelle.
+	\item[] \textbf{Conjonction} Si $\varphi$ et $\psi$ sont des formules, $(\varphi\land \psi)$ est une formule.
+	\item[] \textbf{Disjonction} Si $\varphi$ et $\psi$ sont des formules, $(\varphi\lor \psi)$ est une formule.
+	\item[] \textbf{Implication} Si $\varphi$ et $\psi$ sont des formules, $(\varphi \to \psi)$ est une formule.
+	\item[] \textbf{Suivant (next)} Si $\varphi$ est une formule, $X\varphi$ est une formule.
+	\item[] \textbf{Jusqu'à (Until)} Si $\varphi$ et $\psi$ sont des formules, $(\varphi U \psi)$ est une formule.
+	\item[] \textbf{Toujours (Globally)}. Si $\varphi$ est une formule, $G\varphi$ est une formule.
 \end{itemize}
 
 \subsubsection{Sémantique}
-On pose $Q=\{q_1, \dots q_n\}$ un ensemble d'états  Pour les formules LTL, les modèles sont des couples $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$, $l$ nous indique ainsi quels atomes sont vraies  pour chaque états. \\
-Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiqueté $(p, l)$. \\
-On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ le long de $(p, l)$, de plus on définit l'équivalence $\equiv$ en posant: $\varphi \equiv \psi \textrm{ si } [p,l,i \models \varphi \Leftrightarrow p,l,i \models \psi]$
+On pose $Q=\{q_1, \dots q_n\}$ un ensemble d'états  Pour les formules LTL, les modèles sont des couples $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$, $l$ nous indique ainsi quels atomes sont vrais  pour chaque état. \\
+Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiquetée $(p, l)$. \\
+On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ le long de $(p, l)$, de plus on définit l'équivalence $\equiv$ en posant: $\varphi \equiv \psi \textrm{ si } \forall p,l,i, \:\:[p,l,i \models \varphi \Leftrightarrow p,l,i \models \psi]$
 \begin{itemize}
 	\item[] $p, l, i \models v \Leftrightarrow v \in l(p(i))$ où $v \in AP$
 	\item[] $p,l,i \not \models \bot$
@@ -82,7 +83,7 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\item[] $p,l,i \models \varphi \lor \psi \Leftrightarrow [(p,l,i \models \varphi)\textrm{ ou } (p,l,i \models \psi)]$
 	\item[] $p,l,i \models \lnot \varphi \Leftrightarrow p,l,i \not \models \varphi$
 	\item[] $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
-	\item[] $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,k\models \varphi]$
+	\item[] $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j < k, \:\: p,l,k\models \varphi]$
 	\item[] $\top = \lnot \bot$
 	\item[] $F\varphi = \top U \varphi$
 	\item[] $G\varphi = \lnot F \lnot \varphi$
@@ -91,14 +92,14 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 
 \paragraph{Représentations}
 \begin{itemize}
-	
+
 	\item[] $\varphi U \psi$ \\
 	\shorthandoff{:}
 	\begin{tikzpicture}[scale=1]
 		\draw[->] (0,0) -- (10.5,0) node[right] {};
 		\foreach \x in {0,...,4} {\draw (\x,0.1cm) -- (\x,-0.1cm) node[below] {$\phantom{-}\strut$};}
 		\foreach \x in {0,...,4} {\draw (\x, 0.1cm) -- (\x, -0.1cm) node[above] {$\varphi \strut$};}
-		\draw (0,0) -- (0,0) node[below]{$i \phantom{-}\strut$}; 
+		\draw (0,0) -- (0,0) node[below]{$i \phantom{-}\strut$};
 		\draw (5,0) -- (5,0) node [above] {$\phantom{-}\dots \strut$};
 		\draw (8,0.1cm) -- (8,-0.1cm) node [above] {$\psi \strut$};
 		\draw (8.2,0) node [below] {$j \phantom{-} \strut$};
@@ -106,11 +107,12 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 			\clip (-2,2) rectangle (2,2);
 		\end{scope}
 	\end{tikzpicture}\shorthandon{:}\\
-	\item[] 
+	\item[]
 \end{itemize}
 
 \begin{prop}
-	\leavevmode 
+	\leavevmode
+	Soient $Q$ un ensemble d'états, $p \in Q^\omega$, $l: Q \to 2^{AP}$ et $i \in \mathbb{N}$, on a:
 	\begin{enumerate}
 		\item $p,l,i \models \top$
 		\item $p,l,i \models F\varphi \Leftrightarrow p,l,i \models [\exists j \geq i \textrm{ tel que } p,l,j \models \varphi]$
@@ -122,13 +124,13 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\leavevmode
 	\begin{enumerate}
 		\item Trivial
-		\item 
+		\item
 		\begin{align*}
 			p,l,i \models F\varphi &\Leftrightarrow p,l,i \models \top U \varphi \\
-			&\Leftrightarrow p,l,i \models [\exists j \geq i \textrm{ tel que } p,l,j \models \varphi \textrm{ et } \forall i \leq j \leq k, \:\: p,l,k\models \top] \\
+			&\Leftrightarrow p,l,i \models [\exists j \geq i \textrm{ tel que } p,l,j \models \varphi \textrm{ et } \forall i \leq j < k, \:\: p,l,k\models \top] \\
 			&\Leftrightarrow p,l,i \models [\exists j \geq i \text{ tel que } p,l,j \models \varphi]
 		\end{align*}
-		\item 
+		\item
 		\begin{align*}
 			p,l,i \models G \varphi &\Leftrightarrow p,l,i \models \lnot F \lnot \varphi \\
 			&\Leftrightarrow p,l,i \not \models F \lnot \varphi \\
@@ -139,24 +141,23 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\end{enumerate}
 \end{dem}
 
-\begin{ex} 
+\begin{ex}
 	\leavevmode \newline
 	$a, b \in AP$
 	\begin{itemize}
 		\item $GFa$: (toujours(futur $a$)) ce qui signifie il y a une infinité de positions où $a$ est vrai.
 		\item $aU(Gb)$: $a$ est vrai tant que $b$ est faux, dès que $a$ est faux, $b$ est toujours vrai par la suite
-		\item $(a\lor b ) U a \equiv G(a \lor b)$ car la première formule signifie on a $a$ dès qu'on à pas $a\lor b$ donc on doit toujours avoir $a \lor b$
 	\end{itemize}
 \end{ex}
-Les propriétés sur les opérateurs de la logique usuel reste vrais dans la logique temporelle. On peut ajouter des propriétés sur les opérateurs de la logiques temporelle.
-\begin{prop} 
-	\leavevmode 
+Les propriétés sur les opérateurs de la logique usuelle reste vraies dans la logique temporelle. On peut ajouter des propriétés sur les opérateurs de la logiques temporelle.
+\begin{prop}
+	\leavevmode
 	\begin{enumerate}
 		% Negation:
 		\item $\lnot (X \varphi) \equiv X(\lnot \varphi)$
 		\item $\lnot (G \varphi) \equiv F(\lnot \varphi)$
 		\item $\lnot (F \varphi) \equiv G(\lnot \varphi)$
-		
+
 		%Distributivité
 		\item $X (\varphi \lor \psi) \equiv (X \varphi) \lor (X \psi)$
 		\item $X (\varphi \land \psi) \equiv (X \varphi) \land (X \psi)$
@@ -165,7 +166,7 @@ Les propriétés sur les opérateurs de la logique usuel reste vrais dans la log
 		\item $G (\varphi \land \psi) \equiv (G \varphi) \land (G \psi)$
 		\item $\xi U (\varphi \lor \psi) \equiv (\xi U \varphi) \lor (\xi U \psi)$
 		\item $(\varphi \land \psi) U \xi \equiv (\varphi U \xi) \land (\psi U \xi)$
-		
+
 		%Autres
 		\item $F \varphi \equiv FF\varphi$
 		\item $G \varphi \equiv GG\varphi$
@@ -177,17 +178,17 @@ Les propriétés sur les opérateurs de la logique usuel reste vrais dans la log
 \end{prop}
 
 \begin{dem}
-	\leavevmode 
+	\leavevmode
 	\begin{enumerate}
-		\item[2.] 
+		\item[2.]
 		\begin{align*}
 			 p,l,i \models \lnot (G \varphi) &\Leftrightarrow p,l,i \not \models G \varphi \\
 			 &\Leftrightarrow \lnot (\forall j \geq i\textrm{ tel que } p,l,j \models \varphi) \\
 			 &\Leftrightarrow \exists j \geq i \textrm{ tel que } p,l,j \not \models \varphi \\
 			 &\Leftrightarrow \exists j \geq i \textrm{ tel que } p,l,j \models \lnot \varphi \\
 			 &\Leftrightarrow p,l,i \models F (\lnot \varphi)
-		\end{align*}	
-		
+		\end{align*}
+
 		\item[] Toutes les preuves reposent sur ce type de démonstration, on laisse les autres en exercices.
 	\end{enumerate}
 \end{dem}
@@ -236,10 +237,10 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
       \draw (q0) edge[bend left, above] node{a} (q1)
       (q1) edge[bend left, below] node{b} (q0)
       (q1) edge[loop above] node{a} (q1);
-    \end{tikzpicture}    
+    \end{tikzpicture}
     \caption{Automate de Büchi}
   \end{figure}
-  
+
   Cet automate reconnaît le mot $aaa\dots$ car dans sa trace $q_0q_1q_1\dots$ l'état $q_1$ apparaît une infinité de fois.
   En fait, le langage reconnu (ou accepté) est $aa^\omega | a(a^*ba)^\omega$.
 \end{ex}
@@ -262,7 +263,7 @@ Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q
 On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précisèment, on veut construire un automate qui reconnait les modèles de $\varphi$.
 
 \begin{defi}
-  On note $SubF(\varphi)$ l'ensemble des sous formules de $\varphi$ et leur négation.  
+  On note $SubF(\varphi)$ l'ensemble des sous formules de $\varphi$ et leur négation.
 \end{defi}
 
 \begin{ex}
@@ -288,7 +289,7 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
 
 
 \begin{defi}[Sous-ensemble maximal]
-  Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.  
+  Soit $q \in 2^{SubF(\varphi)}$. On dit que $q$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.
 \end{defi}
 
 \begin{defi}[Sous-ensemble conforme à la sémantique de LTL]
