@@ -1,5 +1,6 @@
 \documentclass[12pt,a4paper]{article}
 
+\usepackage[colorlinks]{hyperref}
 \usepackage[french]{babel}
 \usepackage[T1]{fontenc}
 
@@ -8,10 +9,13 @@
 \usepackage{amsthm}
 \usepackage{mathrsfs}
 
+\usepackage[nameinlink]{cleveref}
+
 \usepackage{tikz}
-\usetikzlibrary{automata, positioning, arrows}
+\usetikzlibrary{automata, positioning, arrows, shapes}
 
 \usepackage{enumerate} 
+
 
 % quelques définitions
 \theoremstyle{plain}
@@ -62,7 +66,8 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
   \]
 \end{defi}
 
-\begin{defi}[Exécution acceptante]  
+\begin{defi}[Exécution acceptante]
+  \label{exec-accept}
   Soient $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ un automate de Büchi et $\rho \in Q^\omega$ une exécution de $\mathcal{A}$.
   On dit que $\rho$ est une exécution acceptante si :
   \[
@@ -71,10 +76,10 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
   où $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$.
 \end{defi}
 
-% \begin{defi}[Trace]
-%   La trace (aussi appelée étiquette) d'une exécution est la suite des lettres, donc un mot.
-%   Si on a pour exécution $\rho = (q_0,a_0,q_1)(q_1,a_1,q_2)\dots$ alors la trace de $\rho$ est le mot $a_0a_1\dots$.
-% \end{defi}
+\begin{defi}[Langage reconnu]
+  Soit $\mathcal{A}$ un automate.
+  Le langage reconnu par l'automate, noté $\mathcal{L}(\mathcal{A})$, est l'ensemble des mots $w$ tel qu'il existe une exécution acceptante de $w$ sur $\mathcal{A}$.
+\end{defi}
 
 \begin{ex}
   Soit $\mathcal{A}=(\{a,b\}, \{q_0, q_1\}, \{q_0\}, \Delta, \{q_1\})$ un automate de Büchi.
@@ -146,10 +151,11 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
 \end{defi}
 
 \begin{defi}[Sous-ensemble conforme à la sémantique de LTL]
+  \label{ss-ens-ok-ltl}
   $q \in 2^{SubF(\varphi)}$ est conforme à la sémantique de LTL :
   \begin{enumerate}[(i)]
   \item Si $\psi_1 U \psi_2 \in q$ alors on a soit $\psi_1 \in q$ soit $\psi_2 \in q$.
-  \item Si $\psi_1 U \psi_2 \in SubF(\varphi)$, alors si $\psi_2 \in q$, $\psi_1 U \psi_2 \in q$.
+  \item $\forall \psi_1 U \psi_2 \in SubF(\varphi)$ si $\psi_2 \in q$ alors $\psi_1 U \psi_2 \in q$.
   \end{enumerate}
 \end{defi}
 
@@ -160,37 +166,77 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   \]
   \begin{enumerate}
   \item $q_1 = \{\lnot a, b, Xb, a U (Xb)\}$ est un sous-ensemble cohérent, maximal et conforme à la sémantique de LTL.
-  \item ...
   \end{enumerate}
 \end{ex}
 
-\begin{thm}
-  Soit $AP$ l'ensemble des propositions atomiques et $\varphi$ une formule LTL sur $AP$, alors $\mathcal{L}(\mathcal{A}_\varphi) = mod(\varphi)$
-  où $\mathcal{A}_\varphi$ est l'automate de Büchi généralisé donné ci-dessous.
-
-  % \noindent
-  On définit $\mathcal{A}_\varphi = (2^{AP}, Q, Q_I, \Delta, \mathscr{F})$ où :
+\begin{defi}
+  Soient $AP$ l'ensemble des propositions atomiques et $\varphi$ une formule LTL sur $AP$.
+  L'automate de Büchi généralisé pour $\varphi$ sur $AP$ est donné par $\mathcal{A}_\varphi = (2^{AP}, Q, Q_I, \Delta, \mathscr{F})$ où :
   \begin{itemize}
   \item $Q \subseteq 2^{SubF(\varphi)}$ contient tout les sous-ensembles de $SubF(\varphi)$ qui sont cohérents, maximaux et conformes à la sémantique de LTL.
-  \item $Q_I = \{ q \subseteq SubF(\varphi) | \varphi \in q \}$. Autrement dit, tous les états contenant exactement notre formule de départ $\varphi$ sont des états initiaux.
+  \item $Q_I = \{ q \in Q | \varphi \in q \}$. Autrement dit, tous les états contenant exactement notre formule de départ $\varphi$ sont des états initiaux.
   \item $\Delta$ est l'ensemble des transitions $(q, a, q')$ avec $q, q' \in Q$ et $a \in 2^{AP}$ vérifiant :
-    \begin{itemize}
+    \begin{enumerate}[(i)]
     \item $\forall p \in AP \quad p \in q \iff p \in a$ (i.e. $a$ possède toutes les propositions atomiques de $q$)
     \item $\forall X\psi \in SubF(\varphi) \quad X\psi \in q \iff \psi \in q'$
     \item $\forall \psi_1 U \psi_2 \in SubF(\varphi) \quad \psi_1 U \psi_2 \in q \iff \left( \psi_2 \in q \lor (\psi_1 \in q \land \psi_1 U \psi_2 \in q')\right)$
     \item $\forall \psi_1 \lor \psi_2 \in SubF(\varphi) \quad \psi_1 \lor \psi_2 \in q \iff (\psi_1 \in q' \lor \psi_2 \in q')$
     \item $\forall \psi_1 \land \psi_2 \in SubF(\varphi) \quad \psi_1 \land \psi_2 \in q \iff (\psi_1 \in q' \land \psi_2 \in q')$
-    \item $\forall \lnot \psi \in SubF(\varphi)$
-    \end{itemize}
+    \end{enumerate}
   \item $\mathscr{F} = \{F_{\psi_1 U \psi_2} | \psi_1 U \psi_2 \in SubF(\varphi)\}$ où
     \[
       F_{\psi_1 U \psi_2} = \{q \in Q | \psi_1 U \psi_2 \not \in q \lor \psi_2\in q \}
     \]
   \end{itemize}
+\end{defi}
+
+L'idée dérrière cette construction est de faire en sorte que l'automate devine quelles sont les sous-formules de $\varphi$ vraies lorsqu'on lit un mot.
+
+% \begin{ex}
+%   Avec $\varphi = Xa$ on obtient l'automate suivant :
+%   \begin{figure}[h]
+%     \centering
+%     \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=$ $, on grid]
+%       \tikzstyle{every node}=[rectangle, align=center]
+      
+%       \node[state, initial] (q0) {$\{a, Xa\}$};
+%       \node[state, initial, below = of q0] (q1) at (0, -1) {$\{\lnot a, Xa\}$};
+%       \node[state, right = of q0] (q3) {$\{a, \lnot Xa\}$};
+%       \node[state, below = of q3, right = of q1] (q4) {$\{\lnot a, \lnot Xa\}$};
+
+      
+%     \end{tikzpicture}    
+%     \caption{Automate de Büchi}
+%   \end{figure}
+% \end{ex}
+
+\begin{thm}
+  Soient :
+  \begin{itemize}
+  \item $AP$ un ensemble de propositions atomiques.
+  \item $\varphi$ une formule LTL sur $AP$.
+  \item $w \in (2^{AP})^\omega$ un mot infini sur l'alphabet $2^{AP}$ tel que $w, 0 \models \varphi$.
+  \item $\mathcal{A}_\varphi$ l'automate de Büchi généralisé pour $\varphi$ sur $AP$.
+  \end{itemize}
+  Alors $w \in \mathcal{L}(\mathcal{A}_\varphi)$. 
 \end{thm}
 
 \begin{proof}
-  ...
+  On veut montrer que $w \in \mathcal{L}(\mathcal{A}_\varphi)$.
+  D'après la \cref{exec-accept}, cela revient à montrer qu'il existe une exécution acceptante de $w$ sur $\mathcal{A}_\varphi$.
+
+  On pose $\forall i \geq 0 \quad q_i = \{ \psi \in SubF(\varphi) | w, i \models \psi\}$ et $\rho = q_0q_1q_2\dots$
+  Montrons que $\rho$ est une exécution acceptante sur $w$ dans $\mathcal{A}_\varphi$.
+  \begin{itemize}
+  \item $w, 0 \models \varphi$ donc
+    $\varphi \in q_0$ donc
+    $q_0$ est bien un état initial.
+  \item Il y a bien des transition $(q_i, w_i, q_{i+1})$ dans $\mathcal{A}_\varphi$.
+  \item $\rho$ vérifie bien la condition d'acceptation.
+    En effet, si $\psi_1 U \psi_2 \in q_i$, alors $w, i \models \psi_1 U \psi_2$ (par construction des $q_i$)
+    donc $\exists j \geq i$ tel que $w,j \models \psi_2$ et $\forall k, i \leq k \leq j \quad w, k \models \psi_1$.
+    Enfin, d'après la \cref{ss-ens-ok-ltl}, on a aussi $\psi_1 U \psi_2 \in q_j$ et il existe un chemin valide jusqu'à $q_j$ ainsi $\rho$ passe infiniment souvent par $F_{\psi_1 U \psi_2}$.
+  \end{itemize}
 \end{proof}
 
 \end{document}
