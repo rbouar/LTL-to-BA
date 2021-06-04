@@ -65,7 +65,6 @@ On définit l'ensemble des formules de LTL comme l'ensemble engendré inductivem
 	\item[] \textbf{Tautologie} $\top$ est une formule.
 	\item[] \textbf{Négation} Si $\varphi$ est une formule propositionnelle, $\lnot \varphi$ en est aussi une.
 	\item[] \textbf{Conjonction} Si $\varphi$ et $\psi$ sont des formules, $(\varphi\land \psi)$ est une formule.
-	\item[] \textbf{Implication} Si $\varphi$ et $\psi$ sont des formules, $(\varphi \to \psi)$ est une formule.
 	\item[] \textbf{Suivant (Next)} Si $\varphi$ est une formule, $X\varphi$ est une formule.
 	\item[] \textbf{Jusqu'à (Until)} Si $\varphi$ et $\psi$ sont des formules, $(\varphi U \psi)$ est une formule.
 \end{itemize}
@@ -93,7 +92,7 @@ On ajoute à cela plusieurs macros définis de la sorte:
 
 \end{itemize}
 
-\paragraph{Représentations}
+\paragraph{Représentation}
 \begin{itemize}
 
 	\item[] $\varphi U \psi$ \\
@@ -467,6 +466,9 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 	\end{itemize}
 	Ainsi le théorème est démontré par induction structurelle.
 \end{proof}
+\begin{cor}
+	Soit $\varphi$ une formule LTL sur $AP$. On a, $\mathcal{L}(\mathcal{A}_\varphi)=mod(\varphi)$ où $mod(\varphi)$ est l'ensemble des modèles reconnues par $\varphi$.
+\end{cor}
 
 
 
