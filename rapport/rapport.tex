@@ -61,7 +61,7 @@ On définit $AP$ l'ensemble des propositions atomiques. Il y a alors une valuati
 On définit l'ensemble des formules de LTL comme l'ensemble engendré inductivement et librement par les règles de constructions suivantes:
 \begin{itemize}
 	\item[] \textbf{Atomes} Si $p \in AP$ alors $p$ est une formule.
-	\item[] \textbf{Absurde} $\bot$ est une formule.
+	\item[] \textbf{Absurde} $\bot$ est une formule.m
 	\item[] \textbf{Tautologie} $\top$ est une formule.
 	\item[] \textbf{Négation} Si $\varphi$ est une formule propositionnelle, $\lnot \varphi$ en est aussi une.
 	\item[] \textbf{Conjonction} Si $\varphi$ et $\psi$ sont des formules, $(\varphi\land \psi)$ est une formule.
@@ -120,7 +120,7 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\end{enumerate}
 \end{prop}
 
-\begin{dem}
+\begin{proof}
 	\leavevmode
 	\begin{enumerate}
 		\item Trivial
@@ -139,7 +139,7 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 			&\Leftrightarrow p,l,i \models [\forall j \geq i \textrm{ on a } p,l,j \models \varphi]
 		\end{align*}
 	\end{enumerate}
-\end{dem}
+\end{proof}
 
 \begin{ex}
 	\leavevmode \newline
@@ -177,7 +177,7 @@ Les propriétés sur les opérateurs de la logique usuelle reste vraies dans la 
 	\end{enumerate}
 \end{prop}
 
-\begin{dem}
+\begin{proof}
 	\leavevmode
 	\begin{enumerate}
 		\item[2.]
@@ -191,7 +191,7 @@ Les propriétés sur les opérateurs de la logique usuelle reste vraies dans la 
 
 		\item[] Toutes les preuves reposent sur ce type de démonstration, on laisse les autres en exercices.
 	\end{enumerate}
-\end{dem}
+\end{proof}
 
 
 
@@ -349,6 +349,50 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
 \begin{proof}
   ...
 \end{proof}
+
+\begin{thm}
+	Soit $\omega \in (2^{AP})^\omega$ et $p=q_0q_1\dots$ une exécution acceptante de $\mathcal{A}_\varphi$ du mot $\omega$ alors: \\
+	$\forall i \geq 0,\: \forall \psi \in SubF(\varphi): \: (\psi \in q_i \Leftrightarrow \omega_i \models \varphi)$
+\end{thm}
+\begin{proof}
+	La preuve s'effectue par induction structurelle sur $\psi$\\
+	\begin{itemize}
+		\item $\psi \in v \in AP$
+		\begin{itemize}
+			\item[$\bullet$] Si $v \in q_i$, alors par construction de $\mathcal{A}_\varphi$ on sait que $v \in \omega_i$, donc $\omega, i \models v$
+			\item[$\bullet$] Inversement si $\omega, i \models v$ alors $v \in \omega_i$ et donc $v \in q_i$ par construction de l'automate.
+		\end{itemize}
+		\item $\psi = \psi_1 \land \psi_2$
+		\begin{itemize}
+			\item[$\bullet$] Supposons $\psi_1 \land \psi_2 \in q_i$, alors par construction de $\mathcal{A}_\varphi$ on a $\psi_1, \psi_2 \in q_i$ et donc par hypothèse d'induction on a $\omega, i \models \psi_1$ et $\omega, i \models \psi_2$. Ainsi par définition de la LTL on a $\omega, i \models \psi_1 \land \psi_2$.
+			\item[$\bullet$] Inversement, supposons $\omega, i \models \psi_1 \land \psi_2$, alors $\omega, i \models \psi_1$ et $\omega \models \psi_2$ donc par hypothèse d'induction, $\psi_1, \psi_2 \in q_i$. On en conclus par construction de $\mathcal{A}_\varphi$ que $\psi_1 \land \psi_2 \in q_i$
+ 		\end{itemize}
+ 		\item $\psi = \lnot \psi_1$
+ 		\begin{itemize}
+ 			\item[$\bullet$] Si $\lnot \psi_1 \in q_i$ alors par construction de l'automate $\psi_1 \not \in q_i$. Par hypothèse d'induction on obtient $\omega, i \not \models \psi_1$. Ainsi $\omega, i \models \lnot \psi_1$
+ 			\item[$\bullet$] Inversement, si $\omega, i \models \lnot \psi_1$. Alors $\omega, i \not \models \psi_1$. Par hypothèse d'induction on obtient donc $\psi_1 \not \in q_i$
+ 		\end{itemize}
+		\item $\psi = X\psi_1$
+		\begin{itemize}
+			\item[$\bullet$] Supposons $\psi \in q_i$, alors on a $\psi_1 \in q_{i+1}$ par construction de $\mathcal{A}_\varphi$, par l'hypothèse d'induction on a donc $\omega, i+1 \models \psi_1$. Ainsi on a bien par définition $\omega, i \models X\psi_1$
+			\item[$\bullet$] Inversement, si $\omega, i \models X\psi_1$ alors $\omega, i+1 \models \psi_1$ et donc par hypothèse d'induction $\psi_1 \in q_{i+1}$. Ainsi par construction de l'automate on a bien $X\psi_1 \in q_i$. 
+		\end{itemize}
+		\item $\psi = \psi_1 U \psi_2$
+		\begin{itemize}
+			\item[] Supposons $\psi_1 U \psi_2 \in q_i$, il y a alors deux possibilités.
+			\begin{itemize}
+				\item[$\bullet$] $\psi_2 \in q_i$: on a alors tout de suite le résultat voulu car $\omega, i \models \psi_2$ et donc $\omega, i \models \psi_1 U \psi_2$.
+				\item[$\bullet$]  $\psi_1 \in q_i$ et $\psi_1 U \psi_2 \in q_{i+1}$. Puisque $p$ est une exécution acceptante, il existe une certain $q_j$ avec $j \geq i+1$ et $\psi_2 \in q_j$ (Sinon on aurait $\psi_1 U \psi_2$ dans tous les états $q_j$ où $j \geq i$ mais alors l'exécution ne serait pas bonne), de plus on a $\psi_1 \in q_i,q_{i+1},\dots,q_{j-1}$. Ainsi on en déduit que $\forall i \leq k \leq j , \: \omega, k \models \psi_1 \textrm{ et } \omega, j \models \psi_2$. Par définition de la LTL on en conclus que $\omega, i \models \psi_1 U \psi_2$
+				\item[] On suppose maintenant $\omega, i \models \psi_1 U \psi_2$. Alors par définition on a:\\
+				$\exists j \geq i$ tel que $\omega, j \models \psi_2$ et $\forall i \leq k < j, \: \omega, k \models \psi_1$\\
+				On a alors $\psi_2 \in q_j$ et $\psi_1 \in q_k \:\: \forall i \leq k < j$. \\
+				Ainsi on en conclus que $\psi_1 U \psi_2 \in q_i, q_{i+1} \dots, q_j$.  
+			\end{itemize}
+		\end{itemize}
+	\end{itemize}
+	Ainsi le théorème est démontré par induction structurelle.
+\end{proof}
+
 
 
 \end{document}
