@@ -394,6 +394,7 @@ On remarque que l'automate peut atteindre une taille exponentielle dans la taill
 Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ états.
 
 \begin{thm}
+	\label{thm1}
   Soient :
   \begin{itemize}
   \item $AP$ un ensemble de propositions atomiques.
@@ -423,6 +424,7 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 \end{proof}
 
 \begin{thm}
+	\label{thm2}
 	Soit $\omega \in (2^{AP})^\omega$ et $p=q_0q_1\dots$ une exécution acceptante de $\mathcal{A}_\varphi$ du mot $\omega$ alors: \\
 	$\forall i \geq 0,\: \forall \psi \in SubF(\varphi): \: (\psi \in q_i \Leftrightarrow \omega_i \models \varphi)$
 \end{thm}
@@ -469,6 +471,9 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 \begin{cor}
 	Soit $\varphi$ une formule LTL sur $AP$. On a, $\mathcal{L}(\mathcal{A}_\varphi)=mod(\varphi)$ où $mod(\varphi)$ est l'ensemble des modèles reconnues par $\varphi$.
 \end{cor}
+\begin{proof}
+	Par double inclusion en utilisant \cref{thm1} et \cref{thm2}
+\end{proof}
 
 
 
