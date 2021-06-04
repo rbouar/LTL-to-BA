@@ -8,9 +8,10 @@ build:
 rapport: rapport.pdf
 
 rapport_aux:
-	@mkdir rapport_aux
+	@mkdir -p rapport_aux
 
 rapport.pdf: rapport/rapport.tex | rapport_aux
+	pdflatex -output-directory rapport_aux rapport/rapport.tex
 	pdflatex -output-directory rapport_aux rapport/rapport.tex
 	mv rapport_aux/rapport.pdf .
 
