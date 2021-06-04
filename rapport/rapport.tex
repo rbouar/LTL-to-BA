@@ -117,7 +117,12 @@ Pour un automate de Büchi généralisé, une exécution $\rho$ de $\mathcal{A}$
 \]
 
 \subsection{Traduction de formule LTL en automate de Büchi}
-On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précisément, on veut construire un automate qui reconnait les modèles de $\varphi$.
+On souhaite ``traduire'' une formule LTL en un automate de Büchi.
+Plus précisément, on veut construire un automate qui reconnait les modèles de $\varphi$.
+
+Pour une formule LTL $\varphi$, on peut voir un modèle $(\rho, l)$ de $\varphi$ (où $\rho \in Q^\omega$ et $l : Q \to 2^{AP}$) comme un mot infini sur l'alphabet $2^{AP}$.
+Pour cela, il suffit simplement de considérer $(\rho, l)$ comme le mot $l(\rho(1))l(\rho(2))\dots$
+
 
 \begin{defi}
   On note $SubF(\varphi)$ l'ensemble des sous formules de $\varphi$ et leur négation.  
@@ -190,25 +195,46 @@ On souhaite ``traduire'' une formule LTL en un automate de Büchi. Plus précis�
   \end{itemize}
 \end{defi}
 
-L'idée dérrière cette construction est de faire en sorte que l'automate devine quelles sont les sous-formules de $\varphi$ vraies lorsqu'on lit un mot.
+L'idée dérrière cette construction est de faire en sorte que l'automate devine quelles sont les sous-formules de $\varphi$ qui sont vraies lorsqu'on lit un mot.
+Ce sont les états qui indiquent quelles sont les sous formules vraies.
 
-% \begin{ex}
-%   Avec $\varphi = Xa$ on obtient l'automate suivant :
-%   \begin{figure}[h]
-%     \centering
-%     \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=$ $, on grid]
-%       \tikzstyle{every node}=[rectangle, align=center]
-      
-%       \node[state, initial] (q0) {$\{a, Xa\}$};
-%       \node[state, initial, below = of q0] (q1) at (0, -1) {$\{\lnot a, Xa\}$};
-%       \node[state, right = of q0] (q3) {$\{a, \lnot Xa\}$};
-%       \node[state, below = of q3, right = of q1] (q4) {$\{\lnot a, \lnot Xa\}$};
+Si l'automate devine que $\lnot p$, avec $p \in AP$, est vraie cela revient à vérifier que $p \not \in a$.
+Pour $X \psi$, l'automate vérifie qu'à l'état suivant $\psi$ est bien vraie.
+Enfin, si l'on a $\psi_1 U \psi_2$ vérifier $\psi_2$ qu'au prochain état n'est pas suffisant car $\psi_2$ peut se réaliser bien plus loin.
+Dans ces cas là, la solution consiste à conserver $\psi_1 U \psi_2$ pour se rappeler qu'on doit encore vérifier cette formule.
+Finalement, c'est la condition d'acceptation qui nous permet de dire si la vérification $\psi_1 U \psi_2$ est repoussée indéfiniment ou non.
 
+\newpage
+\begin{ex}
+  Avec $\varphi = Xa$ on obtient l'automate suivant :
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[->, >=stealth, node distance=5cm, initial text=$ $, on grid]
+      \tikzstyle{every node}=[rectangle, align=center]
       
-%     \end{tikzpicture}    
-%     \caption{Automate de Büchi}
-%   \end{figure}
-% \end{ex}
+      \node[state, initial, accepting] (q0) {$\{a, Xa\}$};
+      \node[state, accepting, right = of q0] (q1) {$\{a, \lnot Xa\}$};
+      \node[state, initial, accepting, below = of q0] (q2) {$\{\lnot a, Xa\}$};
+      \node[state, accepting, below = of q1, right = of q2] (q3) {$\{\lnot a, \lnot Xa\}$};
+
+      \draw (q0) edge[loop above] node{$\{a\}$} (q0)
+      (q0) edge[above] node{$\{a\}$} (q1)
+      (q1) edge[above, anchor=south east, bend left] node{$\{a\}$} (q2)
+      (q1) edge[anchor = west] node{$\{a\}$} (q3)      
+      (q2) edge[anchor = east] node{$\{\}$} (q0)
+      (q2) edge[above, bend left] node{$\{\}$} (q1)
+      (q3) edge[above] node{$\{\}$} (q2)
+      (q3) edge[loop below] node{$\{\}$} (q3);
+      
+    \end{tikzpicture}    
+    \caption{l'automate de Büchi généralisé pour $Xa$ sur $\{a\}$}
+  \end{figure}
+  
+  Sur cet exemple, une transition $\{\}$ signifie qu'on a $\lnot a$, autrement dit l'absence d'une variable dans une transition signifie que l'on a sa négation.
+\end{ex}
+
+On remarque que l'automate peut atteindre une taille exponentielle dans la taille de la formule $\varphi$.
+Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ états.
 
 \begin{thm}
   Soient :
