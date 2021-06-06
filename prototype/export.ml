@@ -28,7 +28,7 @@ let states_to_export_string buchi =
     | s :: states -> "\"" ^ state_to_string s ^ "\"" ^ "[color=" ^ color ^ "]\n" ^
     export_states_aux states color  in
   let basic, inits, finals, both = split_states buchi in
-  export_states_aux basic "white" ^
+  export_states_aux basic "black" ^
   export_states_aux inits "cyan" ^
   export_states_aux finals "yellow" ^
   export_states_aux both "green"

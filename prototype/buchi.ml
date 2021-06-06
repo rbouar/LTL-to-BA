@@ -27,6 +27,8 @@ let rec add_all_ltl_to_state s l = match l with
   | [] -> s
   | f :: l -> add_all_ltl_to_state (add_ltl_to_state s f) l
 
+
+
 (* Automate de Buchi (non déterministe) *)
 type buchi = {
     (* Ensemble fini représentant l'alphabet *)
@@ -39,16 +41,22 @@ type buchi = {
     init_states : state list;
   }
 
-let add_const_to_states b states =
-  let rec add_const_to_states_aux b states acc = match states with
-    | [] -> acc
-    | s :: states' ->
-      if is_in_state s (Const b) then states
-      else if is_in_state s (Const (not b)) then states
-      else let acc = (Const b :: s) :: ((Const (not b)) :: s) :: acc in
-        add_const_to_states_aux b states' acc
-  in if states = [] then [[Const b]; [Const (not b)]]
-  else add_const_to_states_aux b states []
+let add_const_to_states states = match states with 
+| [] -> [[Const true]]
+| s :: _ -> if is_in_state s (Const true)
+            then states
+            else List.map (fun l -> (Const true) :: l) states
+
+(* let add_const_to_states b states =
+ *   let rec add_const_to_states_aux b states acc = match states with
+ *     | [] -> acc
+ *     | s :: states' ->
+ *       if is_in_state s (Const b) then states
+ *       else if is_in_state s (Const (not b)) then states
+ *       else let acc = (Const b :: s) :: ((Const (not b)) :: s) :: acc in
+ *         add_const_to_states_aux b states' acc
+ *   in if states = [] then [[Const b]; [Const (not b)]]
+ *      else add_const_to_states_aux b states [] *)
 
 let add_var_to_states v states =
   let rec add_var_to_states_aux v states acc = match states with
@@ -121,7 +129,7 @@ let add_until_to_states u states =
 
 
 let rec add_to_all_states f states = match f with
-  | Const b -> add_const_to_states b states
+  | Const _ -> add_const_to_states states
   | Var v -> add_var_to_states v states
   | Or (o1, o2) ->
     let states = add_to_all_states o2 (add_to_all_states o1 states) in
@@ -168,15 +176,10 @@ let get_final_states f states =
 
 
 let can_create_transition from_state to_state =
-  let rec check ltl =
+  let check ltl =
     match ltl with
-    | Const false -> false
-    | Or (f1, f2) -> (is_in_state to_state f1) || (is_in_state to_state f2)
-    | And (f1, f2) -> (is_in_state to_state f1) && (is_in_state to_state f2)
     | Next f -> is_in_state to_state f
     | Until (f1, f2) as f -> (is_in_state from_state f2) || ((is_in_state from_state f1) && (is_in_state to_state f))
-    | Not (Var _) -> true
-    | Not f -> not (check f)
     | _ -> true
   in List.for_all check from_state;;
 
