@@ -1,0 +1,227 @@
+\documentclass{beamer}
+\hypersetup{pdfstartview={Fit}}
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{eurosym}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+
+% Dessiner les automates
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows, shapes,shapes.geometric}
+
+% quelques définitions
+\theoremstyle{plain}
+\newtheorem{thm}{Théorème}
+\newtheorem{cor}[thm]{Corollaire}
+\newtheorem{lem}[thm]{Lemme}
+\newtheorem{prop}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{defi}{Définition}
+\newtheorem{rmq}{Remarque}
+\newtheorem{ex}{Exemple}
+\newtheorem{qst}{Question}
+
+\usetheme{Montpellier}
+%\useoutertheme{infolines}
+%\usecolortheme{whale}
+\beamertemplatenavigationsymbolsempty
+
+\title {Automates et logique temporelle LTL}
+\author{
+  Souffan Nathan \and
+  Bouarah Romain \and
+  \\Supervisé par François Laroussinie
+}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+
+\section{Introduction}
+\subsection{Sujet}
+\begin{frame}
+  \frametitle{Le sujet}
+
+  \begin{itemize}
+  \item Découvrir la logique LTL
+  \item Reconnaître les modèles d'une formule LTL à l'aide d'un automate
+  \item Implémenter la construction de cet automate
+  \end{itemize}
+\end{frame}
+
+
+\subsection{Vérification de modèles}
+\begin{frame}
+  \frametitle{Utilité}
+
+  \begin{defi}[Vérification de modèles]
+    La vérification de modèles, ou \textit{model checking}, consiste à vérifier certaines propriétés sur le modèle d'un système.
+  \end{defi}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Un exemple basique}
+  
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}[->, auto, initial text=, font=\small, node distance=5cm]
+      \node[state, initial, rectangle] (q0) {a : attente d'1\euro{}};
+      \node[state, right of=q0,rectangle] (q1) {e : eau de source};
+      
+      \draw (q0) edge[loop, above] node{} (q0);
+      \draw (q0) edge[above] node{} (q1);
+    \end{tikzpicture}
+    \caption{Système de transition d'états pour un distributeur d'eau de source}
+  \end{figure}
+
+  Une propriété à vérifier : si la machine attend une infinité de fois 1 \euro{}, alors toujours, dans le futur, de l'eau de source est délivrée
+\end{frame}
+
+
+\section{LTL}
+\subsection{Définitions}
+\begin{frame}
+  \frametitle{Syntaxe}
+  Une formule LTL $f$ peut s'écrire comme :
+  \begin{itemize}
+  \item $p$ : atome
+  \item $\top$ : tautologie
+  \item $\lnot f_1$ : négation
+  \item $f_1 \land f_2$ : conjonction
+  \item $X f_1$ : suivant
+  \item $f_1 U f_2$ : jusqu'à
+  \end{itemize}
+  Avec $f_1, f_2$ des formules LTL et $p \in AP$ une proposition atomique.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Sémantique}
+
+  On interprète une formule sur une position $i \geq 0$ le long d'une exécution étiquetée $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$ 
+  
+  \begin{itemize}
+  \item $p,l,i \models v \Leftrightarrow v \in l(p(i))$ où $v \in AP$
+  \item $p,l,i \models \top$
+  \item $p,l,i \models \varphi \land \psi \Leftrightarrow [(p,l,i \models \varphi) \land (p,l,i \models \psi)]$
+  \item $p,l,i \models \lnot \varphi \Leftrightarrow p,l,i \not \models \varphi$
+  \item $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
+  \item $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j < k, \:\: p,l,k\models \varphi]$
+  \end{itemize}
+\end{frame}
+
+  
+\subsection{Exemples}
+\begin{frame}
+  ajouter des exemples
+\end{frame}
+
+
+\section{Automate de Büchi}
+\begin{frame}
+  \begin{defi}[Automate de Büchi]
+    Un automate de Büchi est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
+    \begin{itemize}
+    \item $\Sigma$ est un alphabet
+    \item $Q$ est l'ensemble des états
+    \item $Q_I \subseteq Q$ est l'ensemble des états initiaux.
+    \item $\Delta \subseteq Q \times \Sigma \times Q$ est l'ensemble des transitions.
+    \item $\mathscr{F} \subseteq Q$ est l'ensemble des états finaux.
+      Un mot $w$ est accepté s'il existe une exécution acceptante de $\mathcal{A}$ sur $w$.
+    \end{itemize}
+  \end{defi}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Un exemple d'automate de Büchi}
+
+  Soit $\mathcal{A}=(\{a,b\}, \{q_0, q_1\}, \{q_0\}, \Delta, \{q_1\})$ un automate de Büchi.
+  L'ensemble des transitions $\Delta$ est donné dans la figure.
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=$ $, on grid]
+      \node[state, initial] (q0) {$q_0$};
+      \node[state, accepting, right of=q0] (q1) {$q_1$};
+      \draw (q0) edge[bend left, above] node{a} (q1)
+      (q1) edge[bend left, below] node{b} (q0)
+      (q1) edge[loop above] node{a} (q1);
+    \end{tikzpicture}
+    \caption{Représentation graphique de $\mathcal{A}$}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}[<+->]
+  \begin{defi}[Exécution]
+    Soit $w \in \Sigma^\omega$ un mot infini.
+    Une exécution de $\mathcal{A}$ sur $w$ est une suite infinie $\rho = q_0q_1q_2\dots \in Q^\omega$ telle que :
+    \[
+      \forall i \geq 0 \quad (q_i, w_i, q_{i+1}) \in \Delta
+    \]
+  \end{defi}
+  
+  \begin{defi}[Exécution acceptante]
+    $\rho \in Q^\omega$ une exécution de $\mathcal{A}$ est dite acceptante si :
+    \[
+      Etats_{\#\infty}(\rho) \cap \mathscr{F} \neq \varnothing
+    \]
+    où $Etats_{\#\infty}(\rho)$ est l'ensemble des états apparaissants une infinité de fois dans $\rho$.
+  \end{defi}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Un exemple d'automate de Büchi}
+
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=$ $, on grid]
+      \node[state, initial] (q0) {$q_0$};
+      \node[state, accepting, right of=q0] (q1) {$q_1$};
+      
+      \draw (q0) edge[loop, above] node{a} (q0);
+      \draw (q0) edge[bend left, above] node{a} (q1);
+      \draw (q1) edge[bend left, below] node{b} (q0);
+      \draw (q1) edge[loop above] node{a} (q1);
+    \end{tikzpicture}
+    \caption{Un automate de Büchi}
+  \end{figure}
+
+  Pour le mot $a^\omega$, on a :
+  \begin{itemize}
+  \item $q_0q_0\dots$ qui est une exécution
+    \pause
+  \item $q_0q_1\dots$ qui est une exécution acceptante
+    \pause
+  \item ...
+  \end{itemize}
+\end{frame}
+
+
+% \begin{defi}[Langage reconnu]
+%   Le langage reconnu par l'automate, noté $\mathcal{L}(\mathcal{A})$, est l'ensemble des mots $w$ tel qu'il existe une exécution acceptante de $w$ sur $\mathcal{A}$.
+% \end{defi}
+
+\section{Formule LTL -> automate de Büchi}
+\begin{frame}
+  
+\end{frame}
+
+\section{Présentation du prototype}
+\begin{frame}
+  
+\end{frame}
+
+\end{document}
