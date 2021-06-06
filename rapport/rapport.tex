@@ -51,21 +51,24 @@
 \begin{document}
 \maketitle
 \newpage
-\tableofcontents
-\newpage
 
+{
+	\hypersetup{linkcolor=black}
+	\tableofcontents
+	\newpage
+}
 \section{Introduction}
-Pour vérifier la validité d'un programme ou d'un système il peut être intéressant de connaître quel propriétés doivent être vrais et à quels moments. La logique traditionnelle ne permet de qualifier ce genre d'évènements et il est nécessaire de s'intéresser à une logique dépendant du temps. Avec celle ci on peut ainsi vérifier la validité d'un programme grâce au \emph{model checking} dont on ne parlera pas ici mais qui serait la suite logique de ce document.
+Pour vérifier la validité d'un programme ou d'un système il peut être intéressant de connaître quelles propriétés doivent être vraies et à quels moments. La logique traditionnelle ne permet de qualifier ce genre d'évènements et il est nécessaire de s'intéresser à une logique dépendant du temps. Avec celle ci on peut ainsi vérifier la validité d'un programme grâce au \emph{model checking} dont on ne parlera pas ici mais qui serait la suite logique de ce document.
 
 \section{Logique temporelle}
 
 Si pour la logique une propriété ne peut être que vraie ou fausse, celle ci peut être vraie à un certain moment puis fausse par la suite en logique temporelle.
 Il existe plusieurs représentations du temps pour la logique temporelle : arborescente, continue, linéaire, ...
 Pour une représentation linéaire, on peut prendre le temps comme étant $\mathbb{Z}$ pour considérer le passé, ou encore comme ce sera le cas par la suite $\mathbb{N}$.
-Celle ci s'appelle la \underline{LTL} (Logique Temporelle de temps Linéaire).
+Celle ci s'appelle la \underline{LTL} (Logique Temporelle de temps Linéaire\footnote{A ne pas confondre avec la logique linéaire qui est différente.}).
 
 \subsection{LTL}
-On se place donc dans le cas d'une logique temporelle linéaire.
+On se place donc dans le cas d'une logique temporelle de temps linéaire.
 On définit $AP$ l'ensemble des propositions atomiques. Il y a alors une valuation des $AP$ pour chaque $n$ dans $\mathbb{N}$.
 
 \subsubsection{Syntaxe}
@@ -81,7 +84,7 @@ On définit l'ensemble des formules de LTL comme l'ensemble engendré inductivem
 
 \subsubsection{Sémantique}
 On pose $Q=\{q_1, \dots q_n\}$ un ensemble d'états  Pour les formules LTL, les modèles sont des couples $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$, $l$ nous indique ainsi quels atomes sont vrais  pour chaque état. \\
-Les formules sont interprétés sur une position $i \geq 0$ le long d'une exécution étiquetée $(p, l)$. \\
+Les formules sont interprétées sur une position $i \geq 0$ le long d'une exécution étiquetée $(p, l)$. \\
 On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ le long de $(p, l)$, de plus on définit l'équivalence $\equiv$ en posant: $\varphi \equiv \psi \textrm{ si } \forall p,l,i, \:\:[p,l,i \models \varphi \Leftrightarrow p,l,i \models \psi]$
 \begin{itemize}
 	\item[] $p, l, i \models v \Leftrightarrow v \in l(p(i))$ où $v \in AP$
@@ -91,7 +94,7 @@ On note ainsi $p, l, i \models \varphi$ le fait que $\varphi$ est vraie en $i$ l
 	\item[] $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
 	\item[] $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j < k, \:\: p,l,k\models \varphi]$
 \end{itemize}
-\leavevmode \newline 
+\leavevmode \newline
 On ajoute à cela plusieurs macros définis de la sorte:
 \begin{itemize}
 	\item[] $\bot = \lnot \top$ (Absurde).
@@ -163,7 +166,7 @@ On ajoute à cela plusieurs macros définis de la sorte:
 		\item $aU(Gb)$: $a$ est vrai tant que $b$ est faux, dès que $a$ est faux, $b$ est toujours vrai par la suite
 	\end{itemize}
 \end{ex}
-Les propriétés sur les opérateurs de la logique usuelle reste vraies dans la logique temporelle. On peut ajouter des propriétés sur les opérateurs de la logiques temporelle.
+Les propriétés sur les opérateurs de la logique usuelle reste vraies dans la logique temporelle de temps linéaire. On peut ajouter des propriétés sur les opérateurs de la logiques temporelle.
 \begin{prop}
 	\leavevmode
 	\begin{enumerate}
@@ -440,7 +443,7 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 \begin{proof}
 	La preuve s'effectue par induction structurelle sur $\psi$\\
 	\begin{itemize}
-		\item $\psi \in v \in AP$
+		\item $\psi = v \in AP$
 		\begin{itemize}
 			\item[$\bullet$] Si $v \in q_i$, alors par construction de $\mathcal{A}_\varphi$ on sait que $v \in \omega_i$, donc $\omega, i \models v$
 			\item[$\bullet$] Inversement si $\omega, i \models v$ alors $v \in \omega_i$ et donc $v \in q_i$ par construction de l'automate.
@@ -464,7 +467,7 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 		\begin{itemize}
 			\item[$\bullet$] Supposons $\psi_1 U \psi_2 \in q_i$, il y a alors deux possibilités.\\
 				$\psi_2 \in q_i$: on a alors tout de suite le résultat voulu car $\omega, i \models \psi_2$ et donc $\omega, i \models \psi_1 U \psi_2$. \\
-				$\psi_1 \in q_i$ et $\psi_1 U \psi_2 \in q_{i+1}$. Puisque $p$ est une exécution acceptante, il existe une certain $q_j$ avec $j \geq i+1$ et $\psi_2 \in q_j$ (Sinon on aurait $\psi_1 U \psi_2$ dans tous les états $q_j$ où $j \geq i$ mais alors l'exécution ne serait pas bonne), de plus on a $\psi_1 \in q_i,q_{i+1},\dots,q_{j-1}$. Ainsi on en déduit que $\forall i \leq k \leq j , \: \omega, k \models \psi_1 \textrm{ et } \omega, j \models \psi_2$. Par définition de la LTL on en conclus que $\omega, i \models \psi_1 U \psi_2$
+				$\psi_1 \in q_i$ et $\psi_1 U \psi_2 \in q_{i+1}$. Puisque $p$ est une exécution acceptante, il existe une certain $q_j$ avec $j \geq i+1$ et $\psi_2 \in q_j$ (Sinon on aurait $\psi_1 U \psi_2$ dans tous les états $q_j$ où $j \geq i$ mais alors l'exécution ne serait pas bonne), de plus on a $\psi_1 \in q_i,q_{i+1},\dots,q_{j-1}$. Ainsi on en déduit que $\forall i \leq k < j , \: \omega, k \models \psi_1 \textrm{ et } \omega, j \models \psi_2$. Par définition de la LTL on en conclus que $\omega, i \models \psi_1 U \psi_2$
 			\item[$\bullet$] On suppose maintenant $\omega, i \models \psi_1 U \psi_2$. Alors par définition on a:\\
 			$\exists j \geq i$ tel que $\omega, j \models \psi_2$ et $\forall i \leq k < j, \: \omega, k \models \psi_1$\\
 			On a alors $\psi_2 \in q_j$ et $\psi_1 \in q_k \:\: \forall i \leq k < j$. \\
@@ -491,25 +494,25 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 \inputminted[firstline=33, lastline=42]{ocaml}{prototype/buchi.ml}
 
 \subsection{Création des états}
-\inputminted[firstline=120, lastline=136]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=121, lastline=134]{ocaml}{prototype/buchi.ml}
 Les sous parties détaillent une à une comment chaque cas est géré.
 \subsubsection{Ajout des constante}
 \inputminted[firstline=44, lastline=48]{ocaml}{prototype/buchi.ml}
 \subsubsection{Ajout des variables}
-\inputminted[firstline=50, lastline=59]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=51, lastline=60]{ocaml}{prototype/buchi.ml}
 \subsubsection{Ajout des OU}
-\inputminted[firstline=61, lastline=74]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=62, lastline=75]{ocaml}{prototype/buchi.ml}
 \subsubsection{Ajout des ET}
-\inputminted[firstline=76, lastline=89]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=77, lastline=90]{ocaml}{prototype/buchi.ml}
 \subsubsection{Ajout des Next}
-\inputminted[firstline=91, lastline=99]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=92, lastline=100]{ocaml}{prototype/buchi.ml}
 \subsubsection{Ajout des Until}
-\inputminted[firstline=101, lastline=116]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=102, lastline=117]{ocaml}{prototype/buchi.ml}
 
 \subsubsection{Récupération des états initiaux}
-\inputminted[firstline=136, lastline=146]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=139, lastline=147]{ocaml}{prototype/buchi.ml}
 \subsubsection{Récupération des états finaux}
-\inputminted[firstline=150, lastline=164]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=151, lastline=165]{ocaml}{prototype/buchi.ml}
 \subsection{Création des transitions}
 Cette fonction vérifie si l'on peut créer une transition de from\_state à to\_state.
 \inputminted[firstline=168, lastline=178, breaklines, breakanywhere]{ocaml}{prototype/buchi.ml}
