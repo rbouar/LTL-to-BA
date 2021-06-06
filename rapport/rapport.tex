@@ -257,7 +257,7 @@ Les automates sur les mots infinis (ou $\omega$-automates) sont des automates fi
   \end{figure}
   
   Cet automate reconnaît le mot $w = aaa\dots$ car pour l'exécution $\rho = q_0q_1^\omega$ (c'est la seule) de $\mathcal{A}$ sur $w$, l'état $q_1$ apparaît une infinité de fois dans $\rho$.
-  En fait, le langage reconnu (ou accepté) est $aa^\omega | a(a^*ba)^\omega$.
+  En fait, le langage reconnu (ou accepté) est $a^\omega | a(a^*ba)^\omega | a(a^*ba)^*a^\omega$.
 \end{ex}
 
 Les automates de Büchi généralisés sont une variante des automates de Büchi.
@@ -276,7 +276,7 @@ Pour un automate de Büchi généralisé, une exécution $\rho$ de $\mathcal{A}$
   \forall F \in \mathscr{F} \quad Etats_{\#\infty}(\rho) \cap F \neq \varnothing
 \]
 
-\subsection{Traduction de formule LTL en automate de Büchi}
+\section{Traduction de formule LTL en automate de Büchi}
 On souhaite ``traduire'' une formule LTL en un automate de Büchi.
 Plus précisément, on veut construire un automate qui reconnait les modèles de $\varphi$.
 
@@ -295,7 +295,6 @@ Pour cela, il suffit simplement de considérer $(\rho, l)$ comme le mot $l(\rho(
 \begin{defi}[Sous-ensemble cohérent]
   $q \in 2^{SubF(\varphi)}$ est cohérent si toutes les conditions suivantes sont vérifiées :
   \begin{enumerate}[(i)]
-  \item $\bot \not \in q$.
   \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q$ et $\psi_2 \in q$.
   \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q$ ou $\psi_2 \in q$.
   \item $\psi \in q \iff \lnot \psi \not\in q$.
@@ -331,6 +330,8 @@ Pour cela, il suffit simplement de considérer $(\rho, l)$ comme le mot $l(\rho(
   \]
   \begin{enumerate}
   \item $q_1 = \{\lnot a, b, Xb, a U (Xb)\}$ est un sous-ensemble cohérent, maximal et conforme à la sémantique de LTL.
+  \item $q_2 = \{\lnot a, b, Xb, \lnot(a U (Xb))\}$ est un sous-ensemble cohérent, maximal mais non conforme à la sémantique de LTL
+    car on a $Xb$ et $\lnot(a U (Xb))$.
   \end{enumerate}
 \end{ex}
 
