@@ -9,7 +9,7 @@ let state_to_string state =
   "{" ^ String.concat ", " (List.map ltlFormula_to_string state) ^ "}"
 
 let states_to_string states =
-  "{" ^ String.concat ", " (List.map state_to_string states) ^ "}"  
+  "{" ^ String.concat ", " (List.map state_to_string states) ^ "}"
 
 
 
@@ -30,9 +30,9 @@ let rec add_all_ltl_to_state s l = match l with
 (* Automate de Buchi (non déterministe) *)
 type buchi = {
     (* Ensemble fini représentant l'alphabet *)
-    alphabet : SetString.t;    
+    alphabet : SetString.t;
     eval : (state, (state, SetString.t) Hashtbl.t) Hashtbl.t;
-    
+
     (* Ensemble fini contenant tous les états *)
     states : state list;
     final_states : state list;
@@ -43,8 +43,8 @@ let add_const_to_states b states =
   let rec add_const_to_states_aux b states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s (Const b) then acc
-      else if is_in_state s (Const (not b)) then acc
+      if is_in_state s (Const b) then states
+      else if is_in_state s (Const (not b)) then states
       else let acc = (Const b :: s) :: ((Const (not b)) :: s) :: acc in
         add_const_to_states_aux b states' acc
   in if states = [] then [[Const b]; [Const (not b)]]
@@ -54,8 +54,8 @@ let add_var_to_states v states =
   let rec add_var_to_states_aux v states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s (Var v) then acc
-      else if is_in_state s (Not (Var v)) then acc
+      if is_in_state s (Var v) then states
+      else if is_in_state s (Not (Var v)) then states
       else let acc = (Var v :: s) :: ((Not (Var v)) :: s) :: acc in
         add_var_to_states_aux v states' acc
   in if states = [] then [[Var v]; [Not (Var v)]]
@@ -65,8 +65,8 @@ let add_or_to_states o states =
   let rec add_or_to_states_aux o states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s o then acc
-      else if is_in_state s (Not o) then acc
+      if is_in_state s o then states
+      else if is_in_state s (Not o) then states
       else match o with
         | Or (o1, o2) ->
           let acc = if is_in_state s o1 || is_in_state s o2
@@ -80,8 +80,8 @@ let add_and_to_states a states =
   let rec add_and_to_states_aux a states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s a then acc
-      else if is_in_state s (Not a) then acc
+      if is_in_state s a then states
+      else if is_in_state s (Not a) then states
       else match a with
         | And (a1, a2) ->
           let acc = if is_in_state s a1 && is_in_state s a2
@@ -95,8 +95,8 @@ let add_next_to_states n states =
   let rec add_next_to_states_aux n states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s n then acc
-      else if is_in_state s (Not n) then acc
+      if is_in_state s n then states
+      else if is_in_state s (Not n) then states
       else let acc = (n :: s) :: ((Not n) :: s) :: acc in
         add_next_to_states_aux n states' acc
   in add_next_to_states_aux n states []
@@ -105,8 +105,8 @@ let add_until_to_states u states =
   let rec add_until_to_states_rec u states acc = match states with
     | [] -> acc
     | s :: states' ->
-      if is_in_state s u then acc
-      else if is_in_state s u then acc
+      if is_in_state s u then states
+      else if is_in_state s u then states
       else match u with
         | Until (u1, u2) ->
           let acc = if is_in_state s u2
@@ -171,10 +171,10 @@ let can_create_transition from_state to_state =
   let rec check ltl =
     match ltl with
     | Const false -> false
-    | Or (f1, f2) -> (List.mem f1 to_state) || (List.mem f2 to_state)
-    | And (f1, f2) -> (List.mem f1 to_state) && (List.mem f2 to_state)
-    | Next f -> List.mem f to_state
-    | Until (f1, f2) as f -> (List.mem f2 from_state) || ((List.mem f1 from_state) && (List.mem f to_state))
+    | Or (f1, f2) -> (is_in_state to_state f1) || (is_in_state to_state f2)
+    | And (f1, f2) -> (is_in_state to_state f1) && (is_in_state to_state f2)
+    | Next f -> is_in_state to_state f
+    | Until (f1, f2) as f -> (is_in_state from_state f2) || ((is_in_state from_state f1) && (is_in_state to_state f))
     | Not (Var _) -> true
     | Not f -> not (check f)
     | _ -> true
@@ -186,7 +186,7 @@ let get_variables_from_state state =
                                  | _ -> set)
     SetString.empty
     state;;
-                                    
+
 
 let create_all_transitions states =
   let n = List.length states in
@@ -199,11 +199,11 @@ let create_all_transitions states =
                                        Hashtbl.add transitions from_state transition';)
             states in
   transitions;;
-                                                                  
+
 let create_automaton ltl =
   let alphabet = get_variables ltl in
   let states = get_states ltl in
   let init_states = get_initial_states ltl states in
   let final_states = get_final_states ltl states in
   let eval = create_all_transitions states in
-  { alphabet; eval; states; final_states; init_states }  
+  { alphabet; eval; states; final_states; init_states }
