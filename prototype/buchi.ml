@@ -41,22 +41,12 @@ type buchi = {
     init_states : state list;
   }
 
-let add_const_to_states states = match states with 
+let add_const_to_states states = match states with
 | [] -> [[Const true]]
 | s :: _ -> if is_in_state s (Const true)
             then states
             else List.map (fun l -> (Const true) :: l) states
 
-(* let add_const_to_states b states =
- *   let rec add_const_to_states_aux b states acc = match states with
- *     | [] -> acc
- *     | s :: states' ->
- *       if is_in_state s (Const b) then states
- *       else if is_in_state s (Const (not b)) then states
- *       else let acc = (Const b :: s) :: ((Const (not b)) :: s) :: acc in
- *         add_const_to_states_aux b states' acc
- *   in if states = [] then [[Const b]; [Const (not b)]]
- *      else add_const_to_states_aux b states [] *)
 
 let add_var_to_states v states =
   let rec add_var_to_states_aux v states acc = match states with
@@ -179,7 +169,9 @@ let can_create_transition from_state to_state =
   let rec check ltl =
     match ltl with
     | Next f -> is_in_state to_state f
-    | Until (f1, f2) as f -> (is_in_state from_state f2) || ((is_in_state from_state f1) && (is_in_state to_state f))
+    | Until (f1, f2) as f ->
+      (is_in_state from_state f2) ||
+      ((is_in_state from_state f1) && (is_in_state to_state f))
     | Not (Next f) -> not (check (Next f))
     | Not (Until(f1, f2)) -> not (check (Until (f1, f2)))
     | _ -> true
@@ -197,12 +189,14 @@ let create_all_transitions states =
   let n = List.length states in
   let transitions = Hashtbl.create n in
   let _ = List.iter (fun from_state -> let transition' = Hashtbl.create n in
-                                       let _ = List.iter (fun to_state -> if can_create_transition from_state to_state
-                                                                          then Hashtbl.add transition' to_state (get_variables_from_state from_state)
-                                                                          else ())
-                                                 states in
-                                       Hashtbl.add transitions from_state transition';)
-            states in
+                      let _ = List.iter (fun to_state ->
+                          if can_create_transition from_state to_state
+                          then Hashtbl.add transition' to_state
+                              (get_variables_from_state from_state)
+                          else ())
+                          states in
+                      Hashtbl.add transitions from_state transition';)
+      states in
   transitions;;
 
 let create_automaton ltl =

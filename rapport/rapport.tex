@@ -16,6 +16,11 @@
 \usepackage{tikz}
 \usetikzlibrary{automata, positioning, arrows, shapes}
 
+% Ajouter du code
+\usepackage[outputdir={rapport_aux}]{minted}
+
+
+
 
 % quelques définitions
 \theoremstyle{plain}
@@ -45,6 +50,8 @@
 
 \begin{document}
 \maketitle
+\newpage
+\tableofcontents
 \newpage
 
 \section{Introduction}
@@ -475,6 +482,38 @@ Si on a $Card(SubF(\varphi)) = n$ alors l'automate peut avoir au plus $2^n$ éta
 \begin{proof}
 	Par double inclusion en utilisant \cref{thm1} et \cref{thm2}
 \end{proof}
+
+\section{Implémentation}
+\subsection{Premières définitions des types}
+\inputminted[firstline=3, lastline=10]{ocaml}{prototype/ltl.ml}
+\inputminted[firstline=3, lastline=3]{ocaml}{prototype/buchi.ml}
+\inputminted[firstline=33, lastline=42]{ocaml}{prototype/buchi.ml}
+
+\subsection{Création des états}
+\inputminted[firstline=120, lastline=136]{ocaml}{prototype/buchi.ml}
+Les sous parties détaillent une à une comment chaque cas est géré.
+\subsubsection{Ajout des constante}
+\inputminted[firstline=44, lastline=48]{ocaml}{prototype/buchi.ml}
+\subsubsection{Ajout des variables}
+\inputminted[firstline=50, lastline=59]{ocaml}{prototype/buchi.ml}
+\subsubsection{Ajout des OU}
+\inputminted[firstline=61, lastline=74]{ocaml}{prototype/buchi.ml}
+\subsubsection{Ajout des ET}
+\inputminted[firstline=76, lastline=89]{ocaml}{prototype/buchi.ml}
+\subsubsection{Ajout des Next}
+\inputminted[firstline=91, lastline=99]{ocaml}{prototype/buchi.ml}
+\subsubsection{Ajout des Until}
+\inputminted[firstline=101, lastline=116]{ocaml}{prototype/buchi.ml}
+
+\subsubsection{Récupération des états initiaux}
+\inputminted[firstline=136, lastline=146]{ocaml}{prototype/buchi.ml}
+\subsubsection{Récupération des états finaux}
+\inputminted[firstline=150, lastline=164]{ocaml}{prototype/buchi.ml}
+\subsection{Création des transitions}
+Cette fonction vérifie si l'on peut créer une transition de from\_state à to\_state.
+\inputminted[firstline=168, lastline=178, breaklines, breakanywhere]{ocaml}{prototype/buchi.ml}
+On va essayer de créer toutes les transitions possibles, d'où les deux List.iter pour effectuer un produit cartésien.
+\inputminted[firstline=188, lastline=200, breaklines, breakanywhere]{ocaml}{prototype/buchi.ml}
 
 
 
