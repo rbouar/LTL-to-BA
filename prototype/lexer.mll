@@ -13,6 +13,12 @@ rule main = parse
   | '('		   { LPAREN }
   | 'U'		   { UNTIL }
   | 'X'		   { NEXT }
+  | 'F'		   { FUTURE }
+  | 'G'		   { GLOBALLY }
+  | 'R'		   { RELEASE }
+  | 'W'		   { WEAK_UNTIL }
+  | "=>"	   { IMPLY }
+  | "<=>"	   { EQUIVALENT }
   | '!'		   { NOT }
   | "&&"	   { AND }
   | "||"	   { OR }
