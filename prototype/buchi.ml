@@ -176,10 +176,12 @@ let get_final_states f states =
 
 
 let can_create_transition from_state to_state =
-  let check ltl =
+  let rec check ltl =
     match ltl with
     | Next f -> is_in_state to_state f
     | Until (f1, f2) as f -> (is_in_state from_state f2) || ((is_in_state from_state f1) && (is_in_state to_state f))
+    | Not (Next f) -> not (check (Next f))
+    | Not (Until(f1, f2)) -> not (check (Until (f1, f2)))
     | _ -> true
   in List.for_all check from_state;;
 
