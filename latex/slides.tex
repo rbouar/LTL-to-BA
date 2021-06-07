@@ -68,42 +68,47 @@
   \begin{defi}[Vérification de modèles]
     La vérification de modèles, ou \textit{model checking}, consiste à vérifier certaines propriétés sur le modèle d'un système.
   \end{defi}
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Un exemple basique}
   
-  \begin{figure}
-    \centering
-    \begin{tikzpicture}[->, auto, initial text=, font=\small, node distance=5cm]
-      \node[state, initial, rectangle] (q0) {a : attente d'1\euro{}};
-      \node[state, right of=q0,rectangle] (q1) {e : eau de source};
-      
-      \draw (q0) edge[loop, above] node{} (q0);
-      \draw (q0) edge[above] node{} (q1);
-    \end{tikzpicture}
-    \caption{Système de transition d'états pour un distributeur d'eau de source}
-  \end{figure}
-
-  Une propriété à vérifier : si la machine attend une infinité de fois 1 \euro{}, alors toujours, dans le futur, de l'eau de source est délivrée
+  \pause
+  
+  \begin{ex}
+    \begin{itemize}[<+->]
+    \item On souhaite vérifier la \textit{sûreté et réactivité} d'un \textit{ascenceur}
+    \item Vérifier qu'il n'y a \textit{pas d'interblocage} dans un \textit{programme concurrentiel}
+    \end{itemize}
+  \end{ex}
 \end{frame}
 
 
 \section{LTL}
 \subsection{Définitions}
+
+\begin{frame}
+  \frametitle{Les logiques temporelles}
+
+  \pause
+  Plusieurs logiques temporelles :
+  \begin{itemize}[<+->]
+  \item \textit{Computation tree logic} (CTL) ou logique du temps arborescent
+  \item \textit{linear temporal logic} (LTL) ou Logique temporelle linéaire
+  \item \textit{Signal Temporal Logic}, \textit{Metric Interval Temporal Logic}, ...
+  \end{itemize}
+\end{frame}
+
 \begin{frame}
   \frametitle{Syntaxe}
+
+  Soient $f_1, f_2$ des formules LTL et $p \in AP$ une proposition atomique.
   Une formule LTL $f$ peut s'écrire comme :
   \begin{itemize}
   \item $p$ : atome
   \item $\top$ : tautologie
   \item $\lnot f_1$ : négation
   \item $f_1 \land f_2$ : conjonction
+    \pause
   \item $X f_1$ : suivant
   \item $f_1 U f_2$ : jusqu'à
-  \end{itemize}
-  Avec $f_1, f_2$ des formules LTL et $p \in AP$ une proposition atomique.
+  \end{itemize}  
 \end{frame}
 
 
@@ -111,25 +116,99 @@
   \frametitle{Sémantique}
 
   On interprète une formule sur une position $i \geq 0$ le long d'une exécution étiquetée $(p, l)$ où $p \in Q^\omega$ et $l : Q \to 2^{AP}$ 
+
+  \vfill  
+  \begin{tikzpicture}
+    \draw[->] (0,0) -- (10, 0) node[left] {};
+    \foreach \x in {0,...,4} {\draw (\x,0.1cm) -- (\x,-0.1cm) node[below] {$\x$};}
+    \node[below] at (5, 0) {$\dots$};
+
+    \draw (6, 0.1cm) -- (6, -0.1cm) node[below] {$i$};
+  \end{tikzpicture}
+  \vfill
+  
+  \pause
   
   \begin{itemize}
   \item $p,l,i \models v \Leftrightarrow v \in l(p(i))$ où $v \in AP$
   \item $p,l,i \models \top$
-  \item $p,l,i \models \varphi \land \psi \Leftrightarrow [(p,l,i \models \varphi) \land (p,l,i \models \psi)]$
   \item $p,l,i \models \lnot \varphi \Leftrightarrow p,l,i \not \models \varphi$
-  \item $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
-  \item $p,l,i \models \varphi\, U \psi \Leftrightarrow [\exists j \geq i\textrm{ tel que, } p,l,i \models \psi \textrm{ et } \forall i \leq j < k, \:\: p,l,k\models \varphi]$
+  \item $p,l,i \models \varphi \land \psi \Leftrightarrow [(p,l,i \models \varphi) \land (p,l,i \models \psi)]$
   \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Sémantique de \textit{suivant}}
+  \centering
   
+  $p,l,i \models X\varphi \Leftrightarrow p,l,i+1 \models \varphi$
+
+  \vspace{1cm}
+  
+  \begin{tikzpicture}
+    \draw[->] (0,0) -- (10, 0) node[left] {};
+    \foreach \x in {0,...,2} {\draw (\x,0.1cm) -- (\x,-0.1cm) node[below] {$\x$};}
+
+    \node[below] at (3, 0) {$\dots$};
+
+    \draw (4, 0.1cm) -- (4, -0.1cm) node[below] {$i$};
+    \node[above] at (4, 0.1cm) {$X \varphi$};
+    
+    \draw (5, 0.1cm) -- (5, -0.1cm) node[below] {$i+1$};
+    \node[above] at (5, 0.1cm) {$\varphi$};
+    
+    \node[below] at (6, 0) {$\dots$};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sémantique de \textit{jusqu'à}}
+  \centering
+
+  $p,l,i \models \varphi U \psi \Leftrightarrow \left[\exists j \geq i \quad \left(p,l,j \models \psi\right) \land \left(\forall i \leq k < j \quad p,l,k\models \varphi\right)\right]$
+
+  \vspace{1cm}
+    \begin{tikzpicture}
+    \draw[->] (0,0) -- (10, 0) node[left] {};
+
+    \draw (0,0.1cm) -- (0,-0.1cm) node[below] {$0$};    
+
+    \node[below] at (1, -0.1cm) {$\dots$};
+    
+    \draw (2, 0.1cm) -- (2, -0.1cm) node[below] {$i$};
+    \node[above] at (2, 0.1cm) {$\varphi U \psi, \varphi$};
+    
+    \draw (3, 0.1cm) -- (3, -0.1cm) node[below] {$i+1$};
+    \node[above] at (3, 0.1cm) {$\varphi$};
+
+    \node[below] at (4, -0.1cm) {$\dots$};
+
+
+    \draw (5, 0.1cm) -- (5, -0.1cm) node[below] {$j-1$};
+    \node[above] at (5, 0.1cm) {$\varphi$};
+    
+    \draw (6, 0.1cm) -- (6, -0.1cm) node[below] {$j$};
+    \node[above] at (6, 0.1cm) {$\psi$};
+  \end{tikzpicture}
+\end{frame}
+
+
+
 \subsection{Exemples}
 \begin{frame}
-  ajouter des exemples
+  \frametitle{Quelques exemples}
+
+  $a, b \in AP$
+  \begin{itemize}
+  \item $GFa$: (toujours(futur $a$)) ce qui signifie il y a une infinité de positions où $a$ est vrai.
+    \pause
+  \item $aU(Gb)$: $a$ est vrai tant que $b$ est faux, dès que $a$ est faux, $b$ est toujours vrai par la suite
+  \end{itemize}
 \end{frame}
 
 
 \section{Automate de Büchi}
+\subsection{Définitions}
 \begin{frame}
   \begin{defi}[Automate de Büchi]
     Un automate de Büchi est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
@@ -209,15 +288,136 @@
   \end{itemize}
 \end{frame}
 
-
-% \begin{defi}[Langage reconnu]
-%   Le langage reconnu par l'automate, noté $\mathcal{L}(\mathcal{A})$, est l'ensemble des mots $w$ tel qu'il existe une exécution acceptante de $w$ sur $\mathcal{A}$.
-% \end{defi}
-
 \section{Formule LTL -> automate de Büchi}
+\subsection{Définitions}
+
 \begin{frame}
+  \frametitle{Automate de Büchi généralisé}
   
+  \begin{defi}[Automate de Büchi généralisé]
+    Un automate de Büchi généralisé est un quintuplet $\mathcal{A}=(\Sigma, Q, Q_I, \Delta, \mathscr{F})$ où :
+    \begin{itemize}
+    \item $\Sigma, Q, Q_I, \Delta$ sont comme précédemment.
+    \item $\mathscr{F} \subseteq \mathcal{P}(Q)$ est la condition d'acceptation.
+      $\mathscr{F}$ est un ensemble d'ensembles finaux. De même, un mot $w$ est accepté s'il existe une exécution acceptante de $\mathcal{A}$ sur $w$.
+    \end{itemize}  
+  \end{defi}
+
+  $\forall G \in \mathscr{F}$ on passe infiniment de fois par l'un des états de $G$.
 \end{frame}
+
+
+\begin{frame}[<+->]
+  \frametitle{Sous formules}
+  
+  \begin{defi}
+    On note $SubF(\varphi)$ l'ensemble des sous formules de $\varphi$ et leur négation.
+  \end{defi}
+
+  \begin{ex}
+    Si $\varphi = a U b$ alors $SubF(\varphi) = \{ a, \lnot a, b, \lnot b, a U b, \lnot(a U b)\}$.
+  \end{ex}
+\end{frame}
+
+\begin{frame}[shrink] 
+  \begin{defi}[Sous-ensemble cohérent]
+    $q \in 2^{SubF(\varphi)}$ est cohérent si :
+    \begin{enumerate}[(i)]
+    \item $\bot \not \in q$.
+    \item Si $\psi_1 \land \psi_2 \in q$ alors $\psi_1 \in q$ et $\psi_2 \in q$.
+    \item Si $\psi_1 \lor \psi_2 \in q$ alors $\psi_1 \in q$ ou $\psi_2 \in q$.
+    \item $\psi \in q \iff \lnot \psi \not\in q$.
+    \end{enumerate}
+  \end{defi}
+
+  \pause
+  
+  \begin{defi}[Sous-ensemble maximal]
+    $q \in 2^{SubF(\varphi)}$ est maximal si pour tout $\psi \in SubF(\varphi)$ on a soit $\psi \in q$ soit $\lnot \psi \in q$.  
+  \end{defi}
+
+  \pause
+  
+  \begin{defi}[Sous-ensemble conforme à la sémantique de LTL]
+    \label{ss-ens-ok-ltl}
+    $q \in 2^{SubF(\varphi)}$ est conforme à la sémantique de LTL :
+    \begin{enumerate}[(i)]
+    \item Si $\psi_1 U \psi_2 \in q$ alors on a soit $\psi_1 \in q$ soit $\psi_2 \in q$.
+    \item $\forall \psi_1 U \psi_2 \in SubF(\varphi)$ si $\psi_2 \in q$ alors $\psi_1 U \psi_2 \in q$.
+    \end{enumerate}
+  \end{defi}  
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Un exemple}
+  
+  Soit $\varphi = a U (Xb)$ alors
+  \[
+    SubF(\varphi) = \{a, \lnot a, b, \lnot b, Xb, \lnot (Xb), a U (Xb), \lnot (aU(Xb))\}
+  \]
+  \begin{enumerate}
+    \pause
+  \item $q_1 = \{\lnot a, b, Xb, a U (Xb)\}$ est un sous-ensemble cohérent, maximal et conforme à la sémantique de LTL.
+    \pause
+  \item $q_2 = \{\lnot a, b, Xb, \lnot(a U (Xb))\}$ est un sous-ensemble cohérent, maximal mais non conforme à la sémantique de LTL car on a $Xb$ et $\lnot(a U (Xb))$.
+  \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+  On pose $\mathcal{A}_\varphi = (2^{AP}, Q, Q_I, \Delta, \mathscr{F})$ où :
+  \begin{itemize}
+  \item $Q \subseteq 2^{SubF(\varphi)}$ contient tout les sous-ensembles cohérents, maximaux et conformes à la sémantique de LTL.
+  \item $Q_I = \{ q \in Q | \varphi \in q \}$
+  \item $(q, a, q') \in \Delta$ si :
+    \begin{enumerate}[(i)]
+    \item $\forall p \in AP \quad p \in q \iff p \in a$ (i.e. $a$ possède toutes les propositions atomiques de $q$)
+    \item $\forall X\psi \in SubF(\varphi) \quad X\psi \in q \iff \psi \in q'$
+    \item $\forall \psi_1 U \psi_2 \in SubF(\varphi) \quad \psi_1 U \psi_2 \in q \iff \left( \psi_2 \in q \lor (\psi_1 \in q \land \psi_1 U \psi_2 \in q')\right)$    
+    \end{enumerate}
+  \item $\mathscr{F} = \{F_{\psi_1 U \psi_2} | \psi_1 U \psi_2 \in SubF(\varphi)\}$ où
+    \[
+      F_{\psi_1 U \psi_2} = \{q \in Q | \psi_1 U \psi_2 \not \in q \lor \psi_2\in q \}
+    \]
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[shrink]
+  \frametitle{Exemple pour $\varphi = Xa$}
+  
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}[->, >=stealth, node distance=3cm, initial text=, on grid, font=\small]
+      \tikzstyle{every node}=[rectangle, align=center]
+      
+      \node[state, initial, accepting, rectangle] (q0) {$\{a, Xa\}$};
+      \node[state, accepting, right = of q0, rectangle] (q1) {$\{a, \lnot Xa\}$};
+      \node[state, initial, accepting, below = of q0, rectangle] (q2) {$\{\lnot a, Xa\}$};
+      \node[state, accepting, below = of q1, right = of q2, rectangle] (q3) {$\{\lnot a, \lnot Xa\}$};
+
+      \draw (q0) edge[loop above] node{$\{a\}$} (q0)
+      (q0) edge[above] node{$\{a\}$} (q1)
+      (q1) edge[above, anchor=south east, bend left] node{$\{a\}$} (q2)
+      (q1) edge[anchor = west] node{$\{a\}$} (q3)      
+      (q2) edge[anchor = east] node{$\{\}$} (q0)
+      (q2) edge[above, bend left] node{$\{\}$} (q1)
+      (q3) edge[above] node{$\{\}$} (q2)
+      (q3) edge[loop below] node{$\{\}$} (q3);
+      
+    \end{tikzpicture}    
+    \caption{l'automate de Büchi généralisé pour $Xa$ sur $\{a\}$}
+  \end{figure}
+\end{frame}
+
+\subsection{Le principal théorème}
+\begin{frame}
+  \begin{thm}
+    Soit $\varphi$ une formule LTL sur $AP$. On a, $\mathcal{L}(\mathcal{A}_\varphi)=mod(\varphi)$ où $mod(\varphi)$ est l'ensemble des modèles reconnues par $\varphi$.
+  \end{thm}
+\end{frame}
+
 
 \section{Présentation du prototype}
 \begin{frame}
