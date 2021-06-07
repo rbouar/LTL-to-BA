@@ -417,6 +417,27 @@
     Soit $\varphi$ une formule LTL sur $AP$. On a, $\mathcal{L}(\mathcal{A}_\varphi)=mod(\varphi)$ où $mod(\varphi)$ est l'ensemble des modèles reconnues par $\varphi$.
   \end{thm}
 \end{frame}
+\subsubsection{Lemme 1}
+\begin{frame}
+	\begin{lem}
+		Soit $\omega \in (2^{AP})^\omega$ et $p=q_0q_1\dots$ une exécution acceptante de $\mathcal{A}_\varphi$ du mot $\omega$ alors: \\
+		$\forall i \geq 0,\: \forall \psi \in SubF(\varphi): \: (\psi \in q_i \Leftrightarrow \omega_i \models \varphi)$
+	\end{lem}
+\end{frame}
+\begin{frame}
+	\begin{proof}
+		Par induction structurelle sur $\psi$
+		\pause
+		\begin{itemize}
+			\item $\psi = v \in AP$ \pause
+			\item $\psi = \psi_1 \land \psi_2$ \pause
+			\item $\psi = \lnot \psi_1$ \pause
+			\item $\psi = X\psi_1$ \pause
+			\item $\psi = \psi_1 U \psi_2$
+		\end{itemize}
+	\end{proof}
+\end{frame}	
+
 
 
 \section{Présentation du prototype}
