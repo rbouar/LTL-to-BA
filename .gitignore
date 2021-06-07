@@ -7,5 +7,6 @@ prototype/main.exe
 buchi.dot
 buchi.pdf
 
-rapport_aux/
+latex_aux/
 rapport.pdf
+slides.pdf

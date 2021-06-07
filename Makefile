@@ -1,23 +1,29 @@
-all: build rapport
+LATEX_AUX_DIR = latex_aux
+
+all: build latex
 
 
 build:
 	make -C prototype build
 
 
-rapport: rapport.pdf
+latex: rapport.pdf slides.pdf
 
-rapport_aux:
-	@mkdir -p rapport_aux
+$(LATEX_AUX_DIR):
+	@mkdir -p $@
 
-rapport.pdf: rapport/rapport.tex | rapport_aux
-	pdflatex -shell-escape -output-directory rapport_aux rapport/rapport.tex
-	pdflatex -shell-escape -output-directory rapport_aux rapport/rapport.tex
-	mv rapport_aux/rapport.pdf .
+rapport.pdf: latex/rapport.tex | $(LATEX_AUX_DIR)
+	pdflatex -shell-escape -output-directory $(LATEX_AUX_DIR) latex/rapport.tex
+	pdflatex -shell-escape -output-directory $(LATEX_AUX_DIR) latex/rapport.tex
+	mv $(LATEX_AUX_DIR)/rapport.pdf .
+
+slides.pdf : latex/slides.tex | $(LATEX_AUX_DIR)
+	pdflatex -output-directory $(LATEX_AUX_DIR) latex/slides.tex
+	mv $(LATEX_AUX_DIR)/slides.pdf .
 
 clean:
 	make -C prototype clean
-	rm -rf rapport_aux/ rapport.pdf
+	rm -rf $(LATEX_AUX_DIR) rapport.pdf slides.pdf
 
 topdf: buchi.dot
 	dot -Tpdf buchi.dot -o buchi.pdf
