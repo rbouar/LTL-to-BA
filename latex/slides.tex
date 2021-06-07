@@ -414,6 +414,8 @@
 \subsection{Le principal théorème}
 \begin{frame}
   \begin{thm}
+    \frametitle{Correction de la construction}
+    
     Soit $\varphi$ une formule LTL sur $AP$. On a, $\mathcal{L}(\mathcal{A}_\varphi)=mod(\varphi)$ où $mod(\varphi)$ est l'ensemble des modèles reconnues par $\varphi$.
   \end{thm}
 \end{frame}
@@ -439,6 +441,28 @@
 \end{frame}	
 
 
+\begin{frame}
+  \frametitle{$\mathcal{L}(\mathcal{A}_\varphi) \supseteq mod(\varphi)$}
+  
+  \begin{lemma}
+    Si $w \in (2^{AP})^\omega$ un mot infini sur l'alphabet $2^{AP}$ tel que $w, 0 \models \varphi$
+    alors $w \in \mathcal{L}(\mathcal{A}_\varphi)$.
+  \end{lemma}
+
+  \pause
+  
+  \begin{proof}
+    \begin{enumerate}[<+->]
+    \item $\forall i \geq 0 \quad q_i = \{ \psi \in SubF(\varphi) | w, i \models \psi\}$ et
+      $\rho = q_0q_1q_2\dots$
+    \item $w, 0 \models \varphi$ donc $\varphi \in q_0$ donc $q_0$ est bien un état initial.
+    \item Il y a bien des transition $(q_i, w_i, q_{i+1})$ dans $\mathcal{A}_\varphi$.
+    \item si $\psi_1 U \psi_2 \in q_i$, alors $w, i \models \psi_1 U \psi_2$ (par construction des $q_i$)
+    donc $\exists j \geq i$ tel que $w,j \models \psi_2$ et $\forall k, i \leq k < j \quad w, k \models \psi_1$.
+    Enfin, on a aussi $\psi_1 U \psi_2 \in q_j$ et il existe un chemin valide jusqu'à $q_j$ ainsi $\rho$ passe infiniment souvent par $F_{\psi_1 U \psi_2}$.
+    \end{enumerate}    
+  \end{proof}
+\end{frame}
 
 \section{Présentation du prototype}
 \begin{frame}
